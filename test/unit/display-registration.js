@@ -1,7 +1,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 const chrome = require('sinon-chrome/apps');
-const screen = require('../../src/display-id-screen');
+const screen = require('../../src/display-registration');
 
 const sandbox = sinon.createSandbox();
 

@@ -34,7 +34,7 @@ describe('Window Manager', () => {
 
     windowManager.launchPlayer();
 
-    assert(chrome.app.window.create.calledWith('player.html', expectedWindowOptions), 'chrome.app.window.create should have been called');
+    assert(chrome.app.window.create.calledWith('display-id.html', expectedWindowOptions), 'chrome.app.window.create should have been called');
   });
 
   it('should release keep awake when player is closed', () => {

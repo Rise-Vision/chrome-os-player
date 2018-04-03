@@ -6,7 +6,7 @@ function launchPlayer() {
     outerBounds: getDefaultScreenBounds()
   };
 
-  chrome.app.window.create('player.html', options, (playerWindow) => {
+  chrome.app.window.create('display-id.html', options, (playerWindow) => {
     playerWindow.onClosed.addListener(() => chrome.power.releaseKeepAwake());
   });
 }
