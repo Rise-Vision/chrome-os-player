@@ -1,3 +1,4 @@
+/* eslint-disable func-style */
 const assert = require('assert');
 const sinon = require('sinon');
 const chrome = require('sinon-chrome/apps');
@@ -8,14 +9,10 @@ const sandbox = sinon.createSandbox();
 describe('Display ID Screen', () => {
 
   const viewModel = {
-    bindValidateDisplayId() {},
+    bindRegistrationFunction() {},
     showEmptyDisplayIdError() {},
     showInvalidDisplayIdError() {},
     launchViewer() {}
-  }
-
-  const validator = {
-    validateDisplayId() {return Promise.resolve();}
   }
 
   after(() => chrome.flush());
@@ -23,7 +20,7 @@ describe('Display ID Screen', () => {
   afterEach(() => sandbox.restore());
 
   it('shows invalid display ID error', () => {
-    sandbox.stub(validator, 'validateDisplayId').rejects(Error('Invalid display id'));
+    const validator = ()=>Promise.reject(Error("Invalid display id"));
 
     sandbox.spy(viewModel, 'showInvalidDisplayIdError');
 
@@ -38,6 +35,7 @@ describe('Display ID Screen', () => {
 
   it('shows empty display ID error', () => {
     sandbox.spy(viewModel, 'showEmptyDisplayIdError');
+    const validator = ()=>Promise.resolve();
 
     const controller = screen.createController(viewModel, validator);
 
@@ -49,6 +47,7 @@ describe('Display ID Screen', () => {
   });
 
   it('launches viewer when display ID is valid', () => {
+    const validator = ()=>Promise.resolve();
     sandbox.spy(viewModel, 'launchViewer');
 
     const controller = screen.createController(viewModel, validator);
@@ -60,6 +59,7 @@ describe('Display ID Screen', () => {
   });
 
   it('stores display ID locally when it is valid', () => {
+    const validator = ()=>Promise.resolve();
     const controller = screen.createController(viewModel, validator);
 
     return controller.validateDisplayId('valid')

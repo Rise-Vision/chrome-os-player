@@ -1,12 +1,17 @@
 /* eslint-disable no-magic-numbers */
+let wrapperWindow = null;
 
-function launchPlayer() {
+function setParentWindow(win) {
+  wrapperWindow = win;
+}
+
+function startRegistration() {
   const options = {
-    id: 'player',
+    id: 'registration',
     outerBounds: getDefaultScreenBounds()
   };
 
-  chrome.app.window.create('display-id.html', options, (playerWindow) => {
+  chrome.app.window.create('registration.html', options, (playerWindow) => {
     playerWindow.onClosed.addListener(() => chrome.power.releaseKeepAwake());
   });
 }
@@ -21,6 +26,10 @@ function launchViewer(displayId) {
 
 function launchWebView(url) {
   createWebViewWindow('webview.html', url);
+}
+
+function launchWebViewFromWebview(url) {
+  wrapperWindow.postMessage({msg: "create-window", url}, "*");
 }
 
 function closeAll() {
@@ -59,8 +68,10 @@ function getDefaultScreenBounds() {
 }
 
 module.exports = {
-  launchPlayer,
+  startRegistration,
   launchViewer,
   launchWebView,
-  closeAll
+  launchWebViewFromWebview,
+  closeAll,
+  setParentWindow
 }

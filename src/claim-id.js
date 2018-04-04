@@ -1,10 +1,10 @@
 const windowManager = require("./window-manager");
-const validator = require('./display-id-validator');
+const submittor = require('./claim-id-submittor');
 const screen = require('./display-registration');
 
 function init() {
-  const [viewModel, controller] = screen.init(document, validator);
-  viewModel.bindRegistrationControllerFunction(controller.validateDisplayId.bind(controller));
+  const [viewModel, controller] = screen.init(document, submittor);
+  viewModel.bindRegistrationControllerFunction(controller.submitClaimId.bind(controller));
 
   window.addEventListener("message", (evt)=>{
     windowManager.setParentWindow(evt.source);

@@ -28,13 +28,13 @@ describe('Window Manager', () => {
 
   it('should launch player', () => {
     const expectedWindowOptions = {
-      id: 'player',
+      id: 'registration',
       outerBounds: expectedDefaultOuterBounds
     };
 
-    windowManager.launchPlayer();
+    windowManager.startRegistration();
 
-    assert(chrome.app.window.create.calledWith('display-id.html', expectedWindowOptions), 'chrome.app.window.create should have been called');
+    assert(chrome.app.window.create.calledWith('registration.html', expectedWindowOptions), 'chrome.app.window.create should have been called');
   });
 
   it('should release keep awake when player is closed', () => {
@@ -42,7 +42,7 @@ describe('Window Manager', () => {
     sandbox.stub(playerWindow.onClosed, 'addListener').yields([]);
     chrome.app.window.create.yields(playerWindow);
 
-    windowManager.launchPlayer();
+    windowManager.startRegistration();
 
     assert(chrome.power.releaseKeepAwake.calledOnce, 'chrome.power.releaseKeepAwake should have been called');
   });

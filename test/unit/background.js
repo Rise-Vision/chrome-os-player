@@ -18,14 +18,14 @@ describe('background script', () => {
   after(() => chrome.flush());
 
   it('should launch player when app is launched', () => {
-    sandbox.stub(windowManager, 'launchPlayer');
+    sandbox.stub(windowManager, 'startRegistration');
     chrome.storage.local.get.yields({});
 
     sinon.assert.calledOnce(chrome.app.runtime.onLaunched.addListener);
 
     chrome.app.runtime.onLaunched.dispatch({});
 
-    sinon.assert.calledOnce(windowManager.launchPlayer);
+    sinon.assert.calledOnce(windowManager.startRegistration);
   });
 
   it('should launch viewer when app is launched and there is a saved display id', () => {
@@ -55,7 +55,7 @@ describe('background script', () => {
 
   it('should check for updates when app is launched', () => {
     chrome.runtime.requestUpdateCheck.flush();
-    sandbox.stub(windowManager, 'launchPlayer');
+    sandbox.stub(windowManager, 'startRegistration');
     chrome.storage.local.get.yields({});
 
     chrome.app.runtime.onLaunched.dispatch({});
