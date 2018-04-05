@@ -3,15 +3,12 @@ const windowManager = require('./window-manager');
 function createViewModel(document) {
 
   const form = document.querySelector('form');
-  const cont = document.querySelector('#continue');
-  const links = document.querySelectorAll('a');
+  const links = document.querySelectorAll('a.webview');
 
   links.forEach(link => {
-    if (link.href.startsWith('file') || link.href.startsWith('chrome')) {return;}
-
     link.addEventListener('click', evt => {
       evt.preventDefault();
-      windowManager.launchWebViewFromWebview(link.href);
+      windowManager.launchWebView(link.href);
     });
   });
 
@@ -27,8 +24,6 @@ function createViewModel(document) {
 
   return {
     bindRegistrationControllerFunction(fn) {
-      cont.addEventListener("click", ()=>fn(...getInputs()));
-
       form.onsubmit = (ev) => {
         ev.preventDefault();
         fn(...getInputs());

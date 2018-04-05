@@ -1,0 +1,53 @@
+<div class="wrapper">
+  <header>
+    <div class="logo">
+      <img src="img/logo.svg"> </div>
+    <div class="header-title">
+      <span>Install Rise Player</span>
+    </div>
+  </header>
+  <main>
+    <div class="terms-conditions">By installing Rise Player you agree to the
+      <a class="webview" href="https://www.risevision.com/terms-service-privacy">Terms and Conditions</a>
+    </div>
+    <h3 class="text-center">Enter Your Claim ID</h3>
+    <h4 class="text-center">( or use your
+      <a id="displayIdLink" href="">Display ID</a> )</h4>
+    <div class="form-group">
+      <form>
+        <label class="secondary-label" for="claimIdInput">Claim ID</label>
+        <input id="claimIdInput" autofocus type="text" class="form-control id-form" maxlength="12" autocorrect="off" autocapitalize="off"
+          spellcheck="false" placeholder="000000000000" />
+        <div class="text-right">
+          <a class="webview" href="https://help.risevision.com/hc/en-us/articles/360000325886-What-is-a-Claim-ID">
+            <i class="fa fa-question-circle icon-right" aria-hidden="true"></i>
+            <label>What is a Claim ID?</label>
+          </a>
+        </div>
+        <label class="secondary-label" for="claimNameInput">Display Name</label>
+        <input id="claimNameInput" type="text" class="form-control name-form" />
+        <input type="submit" hidden />
+      </form>
+      <div id="errorSection" hidden class="text-danger half-top">
+        <span id="errorMessage"></span>
+        Please try again.
+      </div>
+    </div>
+    <br/>
+    <br/>
+    <div class="alert alert-info">Please note: Rise Player is only supported on managed devices. In order for Rise Player to start automatically after
+      reboots, your device must be configured to run in kiosk mode. For more information, visit
+      <a class="webview" href="https://www.risevision.com/riseplayer/">http://www.risevision.com/riseplayer/</a>.
+    </div>
+  </main>
+
+  <footer>
+    <div class="zendesk-web-widget">
+      <i class="fa fa-question-circle"></i> Help
+    </div>
+    <div class="actions">
+      <button class="btn btn-default"> Cancel </button>
+      <button id="continue" class="btn btn-primary prototype-next-state"> Continue </button>
+    </div>
+  </footer>
+</div>

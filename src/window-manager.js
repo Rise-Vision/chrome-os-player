@@ -1,10 +1,4 @@
 /* eslint-disable no-magic-numbers */
-let wrapperWindow = null;
-
-function setParentWindow(win) {
-  wrapperWindow = win;
-}
-
 function startRegistration() {
   const options = {
     id: 'registration',
@@ -26,10 +20,6 @@ function launchViewer(displayId) {
 
 function launchWebView(url) {
   createWebViewWindow('webview.html', url);
-}
-
-function launchWebViewFromWebview(url) {
-  wrapperWindow.postMessage({msg: "create-window", url}, "*");
 }
 
 function closeAll() {
@@ -71,7 +61,5 @@ module.exports = {
   startRegistration,
   launchViewer,
   launchWebView,
-  launchWebViewFromWebview,
-  closeAll,
-  setParentWindow
+  closeAll
 }
