@@ -32,16 +32,8 @@
       }
     },
     "sockets": {
-      "udp": {
-        "send": [""],
-        "bind": [""],
-        "multicastMembership": ""
-      },
-      "tcp": {
-        "connect": [""]
-      },
       "tcpServer": {
-        "listen": ["*:*"]
+        "listen": ["127.0.0.1:8989"]
       }
    },
    "webview": {
