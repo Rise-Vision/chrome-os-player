@@ -93,6 +93,13 @@ function normalizeDisplayId(id) {
 }
 
 function createController(viewModel, registrationService) {
+
+  function saveDisplayIdAndLaunchViewer(displayId) {
+    chrome.storage.local.set({displayId});
+    chrome.storage.local.remove('content');
+    viewModel.launchViewer(displayId);
+  }
+
   const controller = {
     validateDisplayId(typedDisplayId) {
       if (!typedDisplayId) {
@@ -103,9 +110,7 @@ function createController(viewModel, registrationService) {
       const displayId = normalizeDisplayId(typedDisplayId);
 
       return registrationService(displayId)
-        .then(() => chrome.storage.local.set({displayId}))
-        .then(() => chrome.storage.local.remove('content'))
-        .then(() => viewModel.launchViewer(displayId))
+        .then(() => saveDisplayIdAndLaunchViewer(displayId))
         .catch(() => viewModel.showInvalidDisplayIdError(typedDisplayId));
     },
     submitClaimId(id, name) {
@@ -120,10 +125,7 @@ function createController(viewModel, registrationService) {
       }
 
       return registrationService(id, name)
-      .then(displayId=>{
-        chrome.storage.local.set({displayId});
-        viewModel.launchViewer(displayId);
-      })
+      .then(displayId => saveDisplayIdAndLaunchViewer(displayId))
       .catch(() => viewModel.showInvalidClaimIdError(id));
     }
   };
