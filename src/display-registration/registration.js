@@ -1,6 +1,7 @@
 const displayIdHtml = require('./display-id.html');
 const displayIdValidator = require('./display-id-validator');
 const claimIdHtml = require('./claim-id.html');
+const networkChecks = require('../network-checks');
 const claimIdSubmittor = require('./claim-id-submittor');
 const displayRegistrationScreen = require('./display-registration');
 const countdownHtml = require('./countdown.html');
@@ -65,6 +66,10 @@ function init() {
       goToDisplayId();
     }
   });
+
+  networkChecks.checkSites()
+  .then(()=>console.log('checking network'))
+  .catch(err=>console.log('network check error', err))
 }
 
 window.addEventListener('DOMContentLoaded', () => {
