@@ -1,6 +1,7 @@
 const sinon = require('sinon');
 const windowManager = require('../../src/window-manager');
 const launchEnvs = require('../../src/launch-environment');
+const networkChecks = require('../../src/network-checks');
 const logger = require('../../src/logging/logger');
 
 const sandbox = sinon.createSandbox();
@@ -10,6 +11,7 @@ describe('background script', () => {
   beforeEach(() => {
     sandbox.stub(logger, 'log');
     sandbox.stub(launchEnvs, 'set');
+    sandbox.stub(networkChecks, 'checkSites').resolves()
     chrome.runtime.getManifest.returns({version: '0.0.0.0'});
     require('../../src/background'); // eslint-disable-line global-require
   });
