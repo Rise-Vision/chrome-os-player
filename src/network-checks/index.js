@@ -9,18 +9,27 @@ const siteList = [
   "https://www.googleapis.com/storage/v1/b/install-versions.risevision.com/o/installer-win-64.exe?fields=kind"
 ];
 
+let result = null;
+
 module.exports = {
   checkSites() {
-    return Promise.all(siteList.map(site=>{
+    result = Promise.all(siteList.map(site=>{
       console.log('Checking networking', site);
       return fetch(site).then(resp=>{
         console.log(site, resp.status);
         return resp.ok ? "" : Promise.reject(Error(site))
       })
       .catch(err=>{
+        if (!err.message.startsWith("http")) {err.message = `${site} ${err.message}`}
+
         logger.error(err);
-        return Promise.reject(site);
+        return Promise.reject(err);
       });
     }));
+
+    return result;
+  },
+  getResult() {
+    return result;
   }
 };

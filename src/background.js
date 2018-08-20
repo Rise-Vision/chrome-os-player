@@ -2,7 +2,6 @@ const windowManager = require('./window-manager');
 const logger = require('./logging/logger');
 const launchEnvs = require('./launch-environment');
 const displayIdServer = require('./marketwall/display-id-server');
-const networkChecks = require('./network-checks');
 
 function init(launchData) {
   const manifest = chrome.runtime.getManifest();
@@ -12,7 +11,6 @@ function init(launchData) {
   windowManager.startRegistration();
 
   displayIdServer.init();
-  networkChecks.checkSites().then(()=>console.log('ok')).catch(err=>console.log('caught error', err))
 
   chrome.runtime.requestUpdateCheck((status, details) => logger.log(`update check result: ${status}`, details));
 }

@@ -1,6 +1,7 @@
 /* eslint-disable max-statements */
 const windowManager = require('../window-manager');
 const launchEnv = require('../launch-environment');
+const networkChecks = require('../network-checks');
 
 function createViewModel(document) {
 
@@ -80,6 +81,14 @@ function createViewModel(document) {
       showError(`The Display ID <b>${displayId}</b> is invalid. `);
     },
 
+    showNetworkCheckError(err) {
+      const messageEnd = err.message.startsWith("http") ?
+        err.message.split(" ")[0] :
+        'required network sites';
+
+      showError(`Could not connect to ${messageEnd}. `);
+    },
+
     launchViewer(displayId) {
       windowManager.launchViewer(displayId)
     }
@@ -97,7 +106,10 @@ function createController(viewModel, registrationService) {
   function saveDisplayIdAndLaunchViewer(displayId) {
     chrome.storage.local.set({displayId});
     chrome.storage.local.remove('content');
-    viewModel.launchViewer(displayId);
+
+    return networkChecks.getResult()
+    .then(() => viewModel.launchViewer(displayId))
+    .catch((err) => viewModel.showNetworkCheckError(err));
   }
 
   const controller = {
