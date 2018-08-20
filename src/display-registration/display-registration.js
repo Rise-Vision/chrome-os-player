@@ -49,6 +49,14 @@ function createViewModel(document) {
     errorMessage.innerHTML = message;
   }
 
+  function showNetworkError(message) {
+    const errorSection = document.getElementById('networkErrorSection');
+    const errorMessage = document.getElementById('networkErrorMessage');
+
+    errorSection.hidden = false;
+    errorMessage.innerHTML = message;
+  }
+
   return {
     bindRegistrationControllerFunction(fn) {
       form.onsubmit = (ev) => {
@@ -81,12 +89,12 @@ function createViewModel(document) {
       showError(`The Display ID <b>${displayId}</b> is invalid. `);
     },
 
-    showNetworkCheckError(err) {
+    showNetworkError(err) {
       const messageEnd = err.message.startsWith("http") ?
         err.message.split(" ")[0] :
         'required network sites';
 
-      showError(`Could not connect to ${messageEnd}. `);
+      showNetworkError(`Could not connect to ${messageEnd}. `);
     },
 
     launchViewer(displayId) {
@@ -109,7 +117,7 @@ function createController(viewModel, registrationService) {
 
     return networkChecks.getResult()
     .then(() => viewModel.launchViewer(displayId))
-    .catch((err) => viewModel.showNetworkCheckError(err));
+    .catch((err) => viewModel.showNetworkError(err));
   }
 
   const controller = {
