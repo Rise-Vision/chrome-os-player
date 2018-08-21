@@ -56,7 +56,6 @@ describe('Countdown Screen', () => {
     screen.createController(viewModel, displayId);
 
     return Promise.resolve(clock.runAll())
-    .then(()=>new Promise(res=>process.nextTick(()=>{clock.runAll(); res()})))
     .then(()=>{
       sinon.assert.notCalled(viewModel.showNetworkError);
       sinon.assert.calledWith(windowManager.launchViewer, displayId);
