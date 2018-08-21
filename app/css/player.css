@@ -120,6 +120,11 @@ img.loading-icon {
   display: block;
 }
 
+.countdown-digits-danger {
+  font-size: 106px;
+  font-weight: 700;
+}
+
 .countdown-digits {
   font-size: 106px;
   color: #4ab767;

@@ -69,6 +69,10 @@ function createViewModel(document) {
       }
     },
 
+    disableContinue() {
+      document.getElementById('continue').setAttribute('disabled', '');
+    },
+
     showEmptyDisplayIdError() {
       showError('Display ID is missing. ');
     },
@@ -97,6 +101,10 @@ function createViewModel(document) {
       showNetworkError(`Could not connect to ${messageEnd}. `);
     },
 
+    showNetworkWaiting() {
+      showNetworkError('Waiting for network checks');
+    },
+
     launchViewer(displayId) {
       windowManager.launchViewer(displayId)
     }
@@ -114,6 +122,10 @@ function createController(viewModel, registrationService) {
   function saveDisplayIdAndLaunchViewer(displayId) {
     chrome.storage.local.set({displayId});
     chrome.storage.local.remove('content');
+
+    viewModel.disableContinue();
+
+    if (!networkChecks.haveCompleted()) {viewModel.showNetworkWaiting()}
 
     return networkChecks.getResult()
     .then(() => viewModel.launchViewer(displayId))

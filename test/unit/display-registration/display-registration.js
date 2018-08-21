@@ -14,6 +14,7 @@ describe('Display ID Screen', () => {
     showEmptyDisplayIdError() {},
     showInvalidDisplayIdError() {},
     showNetworkCheckError() {},
+    disableContinue() {},
     launchViewer() {}
   }
 
@@ -52,6 +53,7 @@ describe('Display ID Screen', () => {
     const validator = ()=>Promise.resolve();
     sandbox.spy(viewModel, 'launchViewer');
     sandbox.stub(networkChecks, 'getResult').resolves(true);
+    sandbox.stub(networkChecks, 'haveCompleted').returns(true);
 
     const controller = screen.createController(viewModel, validator);
 

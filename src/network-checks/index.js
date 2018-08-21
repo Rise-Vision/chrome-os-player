@@ -1,4 +1,7 @@
 const logger = require('../logging/logger');
+const ONE_SECOND_MILLIS = 1000;
+const TIMEOUT_MILLIS = 60000;
+const TIMEOUT_ERROR = Error('network-check-timeout');
 const siteList = [
   "https://services.risevision.com/healthz",
   "https://viewer.risevision.com",
@@ -10,10 +13,12 @@ const siteList = [
 ];
 
 let result = null;
+let isComplete = false;
+let secondsRemaining = TIMEOUT_MILLIS / ONE_SECOND_MILLIS;
 
 module.exports = {
   checkSites() {
-    result = Promise.all(siteList.map(site=>{
+    const checks = Promise.all(siteList.map(site=>{
       console.log('Checking networking', site);
       return fetch(site).then(resp=>{
         console.log(site, resp.status);
@@ -27,9 +32,28 @@ module.exports = {
       });
     }));
 
+    result = Promise.race([
+      checks,
+      new Promise((res, rej)=>{
+        setTimeout(()=>rej(TIMEOUT_ERROR), TIMEOUT_MILLIS);
+        const cancelInterval = setInterval(()=>{
+          if (secondsRemaining === 0) {return cancelInterval}
+          secondsRemaining -= 1
+        }, ONE_SECOND_MILLIS);
+      })
+    ]);
+
+    result.then(()=>isComplete = true);
+
     return result;
   },
   getResult() {
-    return result;
+    return result || Promise.reject(Error('checkSites not called'));
+  },
+  haveCompleted() {
+    return isComplete;
+  },
+  secondsRemaining() {
+    return secondsRemaining;
   }
 };

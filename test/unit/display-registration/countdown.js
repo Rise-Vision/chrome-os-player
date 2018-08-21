@@ -24,6 +24,7 @@ describe('Countdown Screen', () => {
   it('shows 10 second countdown', () => {
     sandbox.stub(windowManager, 'launchViewer').resolves();
     sandbox.stub(networkChecks, 'getResult').resolves();
+    sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
     const clock = sandbox.useFakeTimers();
 
@@ -32,7 +33,7 @@ describe('Countdown Screen', () => {
 
     clock.runAll();
 
-    sinon.assert.callCount(viewModel.updateSecondsRemaining, 9);
+    sinon.assert.callCount(viewModel.updateSecondsRemaining, 10);
     const firstCall = viewModel.updateSecondsRemaining.firstCall.args[0];
     assert.equal(firstCall, 9);
     const secondCall = viewModel.updateSecondsRemaining.secondCall.args[0];
@@ -40,12 +41,13 @@ describe('Countdown Screen', () => {
     const thirdCall = viewModel.updateSecondsRemaining.thirdCall.args[0];
     assert.equal(thirdCall, 7);
     const lastCall = viewModel.updateSecondsRemaining.lastCall.args[0];
-    assert.equal(lastCall, 1);
+    assert.equal(lastCall, 0);
   });
 
   it('launches viewer after 10 second countdown', () => {
     sandbox.stub(windowManager, 'launchViewer').resolves();
     sandbox.stub(networkChecks, 'getResult').resolves();
+    sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
     sandbox.spy(viewModel, 'showNetworkError');
     const clock = sandbox.useFakeTimers();
@@ -64,6 +66,7 @@ describe('Countdown Screen', () => {
   it('launches viewer after showing network error ', () => {
     sandbox.stub(windowManager, 'launchViewer').resolves();
     sandbox.stub(networkChecks, 'getResult').rejects();
+    sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
     sandbox.spy(viewModel, 'showNetworkError');
     const clock = sandbox.useFakeTimers();
@@ -81,6 +84,7 @@ describe('Countdown Screen', () => {
 
   it('launches viewer on continue', () => {
     sandbox.stub(windowManager, 'launchViewer').resolves();
+    sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.useFakeTimers();
 

@@ -20,17 +20,27 @@ function createViewModel(document) { // eslint-disable-line max-statements
     }
   }
 
+  function showErrorBox() {
+    continueButton.innerHTML = 'Skip';
+    networkErrorSection.removeAttribute('hidden');
+    secondsRemaining.className = 'countdown-digits-danger text-danger';
+  }
+
   setupInfoMessage();
 
   return {
-    showNetworkError(message) {
-      const messageEnd = message.startsWith("http") ?
-        message.split(" ")[0] :
-        'required network sites';
+    showNetworkWaiting() {
+      networkErrorMessage.innerHTML = 'Waiting for network checks';
+      showErrorBox();
+    },
 
-      continueButton.innerHTML = 'Skip';
+    showNetworkError(message) {
+      const specificSite = message.startsWith("http");
+      const genericError = 'required network sites';
+      const messageEnd = specificSite ? message.split(" ")[0] : genericError;
+
       networkErrorMessage.innerHTML = `Could not connect to ${messageEnd}.`;
-      networkErrorSection.removeAttribute('hidden');
+      showErrorBox();
     },
     bindController(controller) {
       links.forEach(link => {
@@ -60,9 +70,7 @@ function createViewModel(document) { // eslint-disable-line max-statements
 
     updateSecondsRemaining(seconds) {
       secondsRemaining.innerText = seconds;
-      if (seconds === 1) {
-        secondsText.innerText = 'second.';
-      }
+      secondsText.innerText = seconds === 1 ? 'second' : 'seconds';
     }
   }
 }
@@ -79,16 +87,24 @@ function createController(viewModel, displayId) {
     },
 
     continue() {
+      if (skipNetworkError) {return windowManager.launchViewer(displayId)}
+      skipNetworkError = true;
+
+      if (!networkChecks.haveCompleted()) {
+        viewModel.showNetworkWaiting();
+        runningTimer = startCountdown(networkChecks.secondsRemaining());
+      }
+
       return networkChecks.getResult()
       .then(()=>windowManager.launchViewer(displayId))
       .catch(err=>{
-        if (skipNetworkError) {
+        if (err.message === 'network-check-timeout') {
           return windowManager.launchViewer(displayId);
         }
 
-        viewModel.showNetworkError(err.message)
-        runningTimer = startCountdown(60); // eslint-disable-line no-magic-numbers
-        skipNetworkError = true;
+        viewModel.showNetworkError(err.message);
+        clearInterval(runningTimer);
+        runningTimer = startCountdown(SIXTY_SECONDS);
       })
     },
 
@@ -97,22 +113,24 @@ function createController(viewModel, displayId) {
     }
   };
 
-  const ONE_SECOND = 1000;
-  let runningTimer = startCountdown(10); // eslint-disable-line no-magic-numbers
+  const ONE_SECOND_MILLIS = 1000;
+  const TEN_SECONDS = 10;
+  const SIXTY_SECONDS = 60;
+  let runningTimer = startCountdown(TEN_SECONDS);
   let skipNetworkError = false;
 
   function startCountdown(secs) {
     let seconds = secs;
 
-    return setInterval(setSeconds, ONE_SECOND);
+    return setInterval(setSeconds, ONE_SECOND_MILLIS);
 
     function setSeconds() {
       seconds -= 1;
+      viewModel.updateSecondsRemaining(seconds);
+
       if (seconds === 0) {
         controller.stopCountdown();
         controller.continue();
-      } else {
-        viewModel.updateSecondsRemaining(seconds);
       }
     }
   }
