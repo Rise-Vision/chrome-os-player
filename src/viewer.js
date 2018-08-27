@@ -2,6 +2,7 @@ const viewerInjector = require('./viewer-injector');
 const viewerMessaging = require('./messaging/viewer-messaging');
 const contentLoader = require('./content-loader');
 const logger = require('./logging/logger');
+const offlineSubscriptionCheck = require('./logging/offline-subscription-check');
 const messaging = require('./messaging/messaging-service-client');
 const storage = require('./storage/storage');
 const licensing = require('./licensing');
@@ -32,10 +33,7 @@ function setUpMessaging() {
   messaging.on('screenshot-request', (request) => screenshot.handleRequest(webview, request));
   viewerMessaging.on('viewer-config', (viewerConfig) => {
     logger.log('viewer config received', viewerConfig);
-    licensing.onAuthorizationStatus(isAuthorized => {
-      logger.log('authorization status received', isAuthorized);
-      logger.logClientInfo(viewerConfig, isAuthorized)
-    });
+    offlineSubscriptionCheck.isSubscribed().then(isSubscribed => logger.logClientInfo(viewerConfig, isSubscribed));
   });
 
   return messaging.init()

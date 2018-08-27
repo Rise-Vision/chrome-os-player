@@ -13,7 +13,6 @@ const productCodes = {
 
 const subscriptions = {};
 let displayId = null;
-const authorizationListeners = [];
 
 function init() {
   viewerMessaging.on('licensing-request', sendLicensingUpdate);
@@ -27,10 +26,6 @@ function init() {
   .then(systemInfo.getDisplayId)
   .then(id=>displayId = id)
   .then(submitWatchForProductAuthChanges);
-}
-
-function onAuthorizationStatus(listener) {
-  authorizationListeners.push(listener);
 }
 
 function updateDisplayIdAndResubmitWatch(changes, area) {
@@ -93,14 +88,8 @@ function sendLicensingUpdate() {
   };
 
   viewerMessaging.send(message);
-
-  authorizationListeners.forEach(listener => {
-    const isAuthorized = Object.values(subscriptions).some(subscription => subscription === true);
-    listener(isAuthorized);
-  });
 }
 
 module.exports = {
-  init,
-  onAuthorizationStatus
+  init
 };
