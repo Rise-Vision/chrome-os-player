@@ -70,7 +70,7 @@ function processFolderWatch(message, existingMetadata) {
     return Promise.all(promises);
   }
 
-  return requestMSUpdate(message, {filePath: folderPath});
+  return requestMSUpdate(message, {filePath: folderPath, version: "0"});
 }
 
 function requestMSUpdate(message, metaData) {
