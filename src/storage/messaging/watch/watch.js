@@ -107,10 +107,10 @@ module.exports = {
       .then(() => db.fileMetadata.updateWatchSequence(filePath));
   },
   msResult(message) {
-    const {filePath, error, folderData, watchlistLastChanged} = message;
+    const {filePath, errorCode, errorMsg, folderData, watchlistLastChanged} = message;
 
-    if (error) {
-      return localMessaging.sendFileUpdate({filePath, status: "NOEXIST"});
+    if (errorCode || errorMsg) {
+      return localMessaging.sendFileUpdate({filePath, status: errorMsg || errorCode});
     }
 
     const action = folderData ? handleFolderWatchResult : handleFileWatchResult;

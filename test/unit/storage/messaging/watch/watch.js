@@ -149,7 +149,8 @@ describe("Storage Watch", () => {
     it("should broadcast FILE-UPDATE with NOEXIST status when error providing from MS", () => {
       const msMessage = {
         filePath: "risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/new_photos/screenshot.jpg",
-        error: "NOEXIST"
+        error: "NOEXIST",
+        errorMsg: "NOEXIST"
       };
       return watch.msResult(msMessage).then(() => {
         sinon.assert.calledWith(localMessaging.sendFileUpdate, {filePath: msMessage.filePath, status: "NOEXIST"});
