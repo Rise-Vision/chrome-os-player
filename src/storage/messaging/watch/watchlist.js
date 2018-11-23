@@ -9,7 +9,7 @@ function requestWatchlistCompare() {
   const lastChanged = db.watchlist.lastChanged();
   const msMessage = {topic: "WATCHLIST-COMPARE", lastChanged};
 
-  logger.log(`storage - Sending WATCHLIST-COMPARE against ${lastChanged}`);
+  logger.log(`storage - sending WATCHLIST-COMPARE`, {lastChanged});
   messagingServiceClient.send(msMessage);
 }
 
@@ -47,7 +47,7 @@ function markMissingFilesAsUnknown(remoteWatchlist) {
 
 function refresh(watchlist, lastChanged) {
   const filePaths = Object.keys(watchlist);
-  logger.log(`storage - Received WATCHLIST-RESULT for ${lastChanged} with count: ${filePaths.length}`);
+  logger.log(`storage - received WATCHLIST-RESULT`, {lastChanged, filePaths});
 
   if (filePaths.length === 0) {
     return Promise.resolve();
