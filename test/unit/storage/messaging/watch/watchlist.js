@@ -7,17 +7,20 @@ const db = require('../../../../../src/storage/database/api');
 const watch = require('../../../../../src/storage/messaging/watch/watch');
 const watchlist = require('../../../../../src/storage/messaging/watch/watchlist');
 
+const logger = require('../../../../../src/logging/logger');
 const sandbox = sinon.createSandbox();
 
 describe('Storage Watchlist', () => {
 
   afterEach(() => sandbox.restore());
+  beforeEach(()=> sandbox.stub(logger, 'log'));
 
   describe('WATCHLIST-COMPARE', () => {
     beforeEach(() => sandbox.stub(messagingServiceClient, 'send'));
 
     it('requests WATCHLIST-COMPARE', ()=> {
       sandbox.stub(db.watchlist, 'lastChanged').returns(123456);
+
 
       watchlist.requestWatchlistCompare();
 

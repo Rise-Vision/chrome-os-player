@@ -65,11 +65,19 @@ function processFolderWatch(message, existingMetadata) {
   const folderPath = message.filePath;
   if (existingMetadata) {
     const folderFiles = db.fileMetadata.getFolderFiles(folderPath);
-    logger.log(`storage - processing watch for existing folder ${folderPath}, ${JSON.stringify(folderFiles)}`);
-    const promises = folderFiles.map(fileMetadata => processFileWatch({filePath: fileMetadata.filePath, topic: 'watch'}, fileMetadata));
-    return Promise.all(promises);
+
+    if (folderFiles.length > 0) {
+      logger.log(`storage - processing watch for existing folder ${folderPath}, ${JSON.stringify(folderFiles)}`);
+      const promises = folderFiles.map(fileMetadata => processFileWatch({
+        filePath: fileMetadata.filePath,
+        topic: 'watch'
+      }, fileMetadata));
+
+      return Promise.all(promises);
+    }
   }
 
+  logger.log(`storage - requesting MS update for folder ${folderPath}`);
   return requestMSUpdate(message, {filePath: folderPath, version: "0"});
 }
 
