@@ -107,12 +107,21 @@ describe("Storage Watch", () => {
       });
     });
 
-    it("should not request MS updates when folder has already been watched", () => {
+    it("should not request MS updates when folder is not empty", () => {
+      sandbox.stub(db.fileMetadata, 'get').returns({filePath: folderMessage.filePath, status: 'STALE', version: '1'});
+      sandbox.stub(db.fileMetadata, 'getFolderFiles').returns([{filePath: "test-filep-path", status: "STALE"}]);
+
+      return watch.process(folderMessage).then(() => {
+        sinon.assert.notCalled(messagingServiceClient.send);
+      });
+    });
+
+    it("should request MS updates when folder is empty", () => {
       sandbox.stub(db.fileMetadata, 'get').returns({filePath: folderMessage.filePath, status: 'CURRENT', version: '1'});
       sandbox.stub(db.fileMetadata, 'getFolderFiles').returns([]);
 
       return watch.process(folderMessage).then(() => {
-        sinon.assert.notCalled(messagingServiceClient.send);
+        sinon.assert.calledOnce(messagingServiceClient.send);
       });
     });
 

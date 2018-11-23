@@ -1,4 +1,5 @@
 const messagingServiceClient = require('../../../messaging/messaging-service-client');
+const logger = require('../../../logging/logger');
 const db = require("../../database/api");
 const deleteFile = require("../delete/delete");
 const update = require("../update/update");
@@ -8,6 +9,7 @@ function requestWatchlistCompare() {
   const lastChanged = db.watchlist.lastChanged();
   const msMessage = {topic: "WATCHLIST-COMPARE", lastChanged};
 
+  logger.log(`storage - Sending WATCHLIST-COMPARE against ${lastChanged}`);
   messagingServiceClient.send(msMessage);
 }
 
@@ -45,6 +47,7 @@ function markMissingFilesAsUnknown(remoteWatchlist) {
 
 function refresh(watchlist, lastChanged) {
   const filePaths = Object.keys(watchlist);
+  logger.log(`storage - Received WATCHLIST-RESULT for ${lastChanged} with count: ${filePaths.length}`);
 
   if (filePaths.length === 0) {
     return Promise.resolve();
