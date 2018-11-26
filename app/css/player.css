@@ -65,6 +65,11 @@ a:visited {
   border-bottom: 0;
 }
 
+a:focus {
+  outline: 0;
+  box-shadow: 0 0 0 0.3rem rgba(0, 123, 255, .25);
+}
+
 .icon {
   display: inline-block;
   vertical-align: middle;
@@ -297,10 +302,18 @@ hr {
   border-color: #4ab767;
 }
 
+.btn.btn.btn-primary:focus {
+  box-shadow: 0 0 0 0.3rem rgba(74, 183, 103, .25);
+}
+
 .btn.btn-default {
   color: #333;
   background-color: #e8e8e8;
   border-color: #CCC;
+}
+
+.btn.btn.btn-default:focus {
+  box-shadow: 0 0 0 0.3rem rgba(204, 204, 204, .25);
 }
 
 .btn.disabled,
