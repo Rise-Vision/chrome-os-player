@@ -12,6 +12,7 @@ const fileServer = require('./storage/file-server');
 const launchEnv = require('./launch-environment');
 const screenshot = require('./screenshot');
 const uptime = require('./uptime/uptime');
+const uptimeRendererHealth = require('./uptime/renderer-health');
 
 function setUpMessaging() {
   const webview = document.querySelector('webview');
@@ -62,6 +63,11 @@ function setupResponsivenessEvents(webview) {
   });
 
   webview.addEventListener('responsive', () => clearTimeout(responsiveTimer));
+
+  uptimeRendererHealth.onMultipleFailures(() => {
+    logger.log('player - multiple renderer failures');
+    rebootScheduler.rebootNow();
+  });
 }
 
 function setupClientInfoLog() {
