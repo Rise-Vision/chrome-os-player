@@ -42,7 +42,7 @@ describe('Window Manager', () => {
     const displayId = 'displayId';
     windowManager.launchViewer(displayId);
 
-    sinon.assert.calledWith(chrome.app.window.create, 'viewer.html', expectedWindowOptions);
+    sinon.assert.calledWith(chrome.app.window.create, 'player.html', expectedWindowOptions);
   });
 
   it('should close previous window when viewer is launched', () => {
