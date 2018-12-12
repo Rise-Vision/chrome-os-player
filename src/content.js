@@ -22,7 +22,6 @@ function setUpMessaging() {
 
   webview.addEventListener('loadcommit', (evt) => {
     if (!evt.isTopLevel) {return;}
-    if (!evt.url.match(/http[s]?:\/\/viewer(?:-test)?.risevision.com/)) {return;}
     webview.executeScript({code: viewerInjector.generateMessagingSetupFunction(), runAt: 'document_start'}, ()=>{
       logger.log('viewer webview injection suceeded');
       viewerMessaging.send({from: 'player', topic: 'latch-app-window'});
