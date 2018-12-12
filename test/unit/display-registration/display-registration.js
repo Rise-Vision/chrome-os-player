@@ -49,7 +49,7 @@ describe('Display ID Screen', () => {
       });
   });
 
-  it('launches viewer when display ID is valid and network checks pass', () => {
+  it('launches player when display ID is valid and network checks pass', () => {
     const validator = ()=>Promise.resolve();
     sandbox.spy(viewModel, 'launchPlayer');
     sandbox.stub(networkChecks, 'getResult').resolves(true);
@@ -63,7 +63,7 @@ describe('Display ID Screen', () => {
       });
   });
 
-  it('does not launch viewer when display ID is valid and network checks fail', () => {
+  it('does not launch player when display ID is valid and network checks fail', () => {
     const validator = ()=>Promise.resolve();
     sandbox.spy(viewModel, 'launchPlayer');
     sandbox.stub(networkChecks, 'getResult').rejects(false);
