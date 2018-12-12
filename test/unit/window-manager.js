@@ -25,7 +25,7 @@ describe('Window Manager', () => {
     chrome.flush();
   });
 
-  it('should launch player', () => {
+  it('should launch registration', () => {
     const expectedWindowOptions = {
       id: 'registration',
       outerBounds: expectedDefaultOuterBounds
@@ -36,16 +36,16 @@ describe('Window Manager', () => {
     sinon.assert.calledWith(chrome.app.window.create, 'registration.html', expectedWindowOptions);
   });
 
-  it('should launch viewer', () => {
+  it('should launch player', () => {
     const expectedWindowOptions = {state: 'fullscreen', outerBounds: expectedDefaultOuterBounds};
 
     const displayId = 'displayId';
-    windowManager.launchViewer(displayId);
+    windowManager.launchPlayer(displayId);
 
     sinon.assert.calledWith(chrome.app.window.create, 'player.html', expectedWindowOptions);
   });
 
-  it('should close previous window when viewer is launched', () => {
+  it('should close previous window when player is launched', () => {
     const viewerWindow = {
       onClosed: {addListener() {}},
       contentWindow: {
@@ -64,19 +64,19 @@ describe('Window Manager', () => {
     chrome.app.window.current.returns(previousWindow);
 
     const displayId = 'displayId';
-    return windowManager.launchViewer(displayId).then(() => {
+    return windowManager.launchPlayer(displayId).then(() => {
       sinon.assert.calledOnce(previousWindow.close);
     });
   });
 
-  it('should request keep awake when viewer is launched', () => {
+  it('should request keep awake when player is launched', () => {
     const displayId = 'displayId';
-    windowManager.launchViewer(displayId);
+    windowManager.launchPlayer(displayId);
 
     sinon.assert.calledWith(chrome.power.requestKeepAwake, 'display');
   });
 
-  it('should release keep awake when viewer is closed', () => {
+  it('should release keep awake when player is closed', () => {
     const previousWindow = {close: sinon.spy()};
     chrome.app.window.current.returns(previousWindow);
 
@@ -95,7 +95,7 @@ describe('Window Manager', () => {
     chrome.app.window.create.yields(viewerWindow);
 
     const displayId = 'displayId';
-    return windowManager.launchViewer(displayId).then(() => {
+    return windowManager.launchPlayer(displayId).then(() => {
       sinon.assert.calledOnce(chrome.power.releaseKeepAwake);
     });
   });

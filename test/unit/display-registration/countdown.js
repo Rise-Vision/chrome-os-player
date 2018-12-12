@@ -22,7 +22,7 @@ describe('Countdown Screen', () => {
   afterEach(() => sandbox.restore());
 
   it('shows 10 second countdown', () => {
-    sandbox.stub(windowManager, 'launchViewer').resolves();
+    sandbox.stub(windowManager, 'launchPlayer').resolves();
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
@@ -44,8 +44,8 @@ describe('Countdown Screen', () => {
     assert.equal(lastCall, 0);
   });
 
-  it('launches viewer after 10 second countdown', () => {
-    sandbox.stub(windowManager, 'launchViewer').resolves();
+  it('launches player after 10 second countdown', () => {
+    sandbox.stub(windowManager, 'launchPlayer').resolves();
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
@@ -58,12 +58,12 @@ describe('Countdown Screen', () => {
     return Promise.resolve(clock.runAll())
     .then(()=>{
       sinon.assert.notCalled(viewModel.showNetworkError);
-      sinon.assert.calledWith(windowManager.launchViewer, displayId);
+      sinon.assert.calledWith(windowManager.launchPlayer, displayId);
     });
   });
 
-  it('launches viewer after showing network error ', () => {
-    sandbox.stub(windowManager, 'launchViewer').resolves();
+  it('launches player after showing network error ', () => {
+    sandbox.stub(windowManager, 'launchPlayer').resolves();
     sandbox.stub(networkChecks, 'getResult').rejects();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
@@ -77,12 +77,12 @@ describe('Countdown Screen', () => {
     .then(()=>new Promise(res=>process.nextTick(()=>{clock.runAll(); res()})))
     .then(()=>{
       sinon.assert.called(viewModel.showNetworkError);
-      sinon.assert.calledWith(windowManager.launchViewer, displayId);
+      sinon.assert.calledWith(windowManager.launchPlayer, displayId);
     });
   });
 
-  it('launches viewer on continue', () => {
-    sandbox.stub(windowManager, 'launchViewer').resolves();
+  it('launches player on continue', () => {
+    sandbox.stub(windowManager, 'launchPlayer').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.useFakeTimers();
@@ -91,7 +91,7 @@ describe('Countdown Screen', () => {
     const controller = screen.createController(viewModel, displayId);
 
     return controller.continue()
-    .then(()=>sinon.assert.called(windowManager.launchViewer));
+    .then(()=>sinon.assert.called(windowManager.launchPlayer));
   });
 
   it('closes current window on cancel', () => {

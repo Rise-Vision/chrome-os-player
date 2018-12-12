@@ -8,7 +8,7 @@ function startRegistration() {
   chrome.app.window.create('registration.html', options);
 }
 
-function launchViewer(displayId) {
+function launchPlayer(displayId) {
   const previousWindow = chrome.app.window.current();
   const url = `http://viewer.risevision.com/Viewer.html?player=true&type=display&id=${displayId}`;
 
@@ -73,7 +73,7 @@ function getDefaultScreenBounds() {
 
 module.exports = {
   startRegistration,
-  launchViewer,
+  launchPlayer,
   launchWebView,
   closeAll,
   closeCurrentWindow
