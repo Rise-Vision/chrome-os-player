@@ -75,7 +75,7 @@ function createViewModel(document) { // eslint-disable-line max-statements
   }
 }
 
-function createController(viewModel, displayId) {
+function createController(viewModel) {
 
   const controller = {
     stopCountdown() {
@@ -87,7 +87,7 @@ function createController(viewModel, displayId) {
     },
 
     continue() {
-      if (skipNetworkError) {return windowManager.launchPlayer(displayId)}
+      if (skipNetworkError) {return windowManager.launchPlayer()}
       skipNetworkError = true;
 
       if (!networkChecks.haveCompleted()) {
@@ -96,10 +96,10 @@ function createController(viewModel, displayId) {
       }
 
       return networkChecks.getResult()
-      .then(()=>windowManager.launchPlayer(displayId))
+      .then(()=>windowManager.launchPlayer())
       .catch(err=>{
         if (err.message === 'network-check-timeout') {
-          return windowManager.launchPlayer(displayId);
+          return windowManager.launchPlayer();
         }
 
         viewModel.showNetworkError(err.message);
@@ -138,9 +138,9 @@ function createController(viewModel, displayId) {
   return controller;
 }
 
-function init(document, displayId) {
+function init(document) {
   const viewModel = createViewModel(document);
-  const controller = createController(viewModel, displayId);
+  const controller = createController(viewModel);
   viewModel.bindController(controller);
 
   return [

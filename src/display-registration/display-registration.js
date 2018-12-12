@@ -90,8 +90,8 @@ function createViewModel(document) {
       showError(`The Display ID <b>${displayId}</b> is invalid. `);
     },
 
-    launchPlayer(displayId) {
-      windowManager.launchPlayer(displayId)
+    launchPlayer() {
+      windowManager.launchPlayer();
     }
   }
 }
@@ -113,9 +113,9 @@ function createController(viewModel, registrationService) {
     if (!networkChecks.haveCompleted()) {viewModel.showSpinner()}
 
     return networkChecks.getResult()
-    .then(() => viewModel.launchPlayer(displayId))
+    .then(() => viewModel.launchPlayer())
     .catch((err) => viewModel.networkErrorAcknowledged() ?
-      viewModel.launchPlayer(displayId) :
+      viewModel.launchPlayer() :
       viewModel.showNetworkError(err, displayId));
   }
 

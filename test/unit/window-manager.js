@@ -39,8 +39,7 @@ describe('Window Manager', () => {
   it('should launch player', () => {
     const expectedWindowOptions = {state: 'fullscreen', outerBounds: expectedDefaultOuterBounds};
 
-    const displayId = 'displayId';
-    windowManager.launchPlayer(displayId);
+    windowManager.launchPlayer();
 
     sinon.assert.calledWith(chrome.app.window.create, 'player.html', expectedWindowOptions);
   });
@@ -63,15 +62,13 @@ describe('Window Manager', () => {
     const previousWindow = {close: sinon.spy()};
     chrome.app.window.current.returns(previousWindow);
 
-    const displayId = 'displayId';
-    return windowManager.launchPlayer(displayId).then(() => {
-      sinon.assert.calledOnce(previousWindow.close);
-    });
+    windowManager.launchPlayer()
+
+    sinon.assert.calledOnce(previousWindow.close);
   });
 
   it('should request keep awake when player is launched', () => {
-    const displayId = 'displayId';
-    windowManager.launchPlayer(displayId);
+    windowManager.launchPlayer();
 
     sinon.assert.calledWith(chrome.power.requestKeepAwake, 'display');
   });
@@ -94,10 +91,9 @@ describe('Window Manager', () => {
     sandbox.stub(viewerWindow.contentWindow.document, 'querySelector').returns({addEventListener() {}});
     chrome.app.window.create.yields(viewerWindow);
 
-    const displayId = 'displayId';
-    return windowManager.launchPlayer(displayId).then(() => {
-      sinon.assert.calledOnce(chrome.power.releaseKeepAwake);
-    });
+    windowManager.launchPlayer();
+
+    sinon.assert.calledOnce(chrome.power.releaseKeepAwake);
   });
 
   it('should launch web view', () => {

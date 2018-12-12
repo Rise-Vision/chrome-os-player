@@ -8,16 +8,14 @@ function startRegistration() {
   chrome.app.window.create('registration.html', options);
 }
 
-function launchPlayer(displayId) {
+function launchPlayer() {
   const previousWindow = chrome.app.window.current();
-  const url = `http://viewer.risevision.com/Viewer.html?player=true&type=display&id=${displayId}`;
 
   chrome.power.requestKeepAwake('display');
-  return createWebViewWindow('player.html', url, {state: 'fullscreen'})
-    .then((viewerWindow) => {
-      viewerWindow.onClosed.addListener(() => chrome.power.releaseKeepAwake());
-      previousWindow.close();
-    });
+  chrome.app.window.create('player.html', {outerBounds: getDefaultScreenBounds(), state: 'fullscreen'}, (appWin) => {
+    appWin.onClosed.addListener(() => chrome.power.releaseKeepAwake());
+    previousWindow.close();
+  });
 }
 
 function launchWebView(url) {
