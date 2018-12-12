@@ -8,6 +8,7 @@ const dataHandlerRegisteredObserver = {
       const fn = this.resolvers.pop();
       fn();
     }
+    this.messageReceived = false;
   }
 };
 const messageHandlers = {};
