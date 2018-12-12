@@ -8,11 +8,11 @@ function startRegistration() {
   chrome.app.window.create('registration.html', options);
 }
 
-function launchPlayer() {
+function launchContent() {
   const previousWindow = chrome.app.window.current();
 
   chrome.power.requestKeepAwake('display');
-  chrome.app.window.create('player.html', {outerBounds: getDefaultScreenBounds(), state: 'fullscreen'}, (appWin) => {
+  chrome.app.window.create('content.html', {outerBounds: getDefaultScreenBounds(), state: 'fullscreen'}, (appWin) => {
     appWin.onClosed.addListener(() => chrome.power.releaseKeepAwake());
     previousWindow.close();
   });
@@ -71,7 +71,7 @@ function getDefaultScreenBounds() {
 
 module.exports = {
   startRegistration,
-  launchPlayer,
+  launchContent,
   launchWebView,
   closeAll,
   closeCurrentWindow

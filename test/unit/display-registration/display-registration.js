@@ -15,7 +15,7 @@ describe('Display ID Screen', () => {
     showInvalidDisplayIdError() {},
     showNetworkCheckError() {},
     disableContinue() {},
-    launchPlayer() {}
+    launchContent() {}
   }
 
   after(() => chrome.flush());
@@ -49,9 +49,9 @@ describe('Display ID Screen', () => {
       });
   });
 
-  it('launches player when display ID is valid and network checks pass', () => {
+  it('launches content when display ID is valid and network checks pass', () => {
     const validator = ()=>Promise.resolve();
-    sandbox.spy(viewModel, 'launchPlayer');
+    sandbox.spy(viewModel, 'launchContent');
     sandbox.stub(networkChecks, 'getResult').resolves(true);
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
 
@@ -59,20 +59,20 @@ describe('Display ID Screen', () => {
 
     return controller.validateDisplayId('valid')
       .then(() => {
-        assert.ok(viewModel.launchPlayer.calledOnce);
+        assert.ok(viewModel.launchContent.calledOnce);
       });
   });
 
-  it('does not launch player when display ID is valid and network checks fail', () => {
+  it('does not launch conttent when display ID is valid and network checks fail', () => {
     const validator = ()=>Promise.resolve();
-    sandbox.spy(viewModel, 'launchPlayer');
+    sandbox.spy(viewModel, 'launchContent');
     sandbox.stub(networkChecks, 'getResult').rejects(false);
 
     const controller = screen.createController(viewModel, validator);
 
     return controller.validateDisplayId('valid')
       .then(() => {
-        assert.ok(!viewModel.launchPlayer.calledOnce);
+        assert.ok(!viewModel.launchContent.calledOnce);
       });
   });
   it('stores uppercase display ID locally when it is valid', () => {

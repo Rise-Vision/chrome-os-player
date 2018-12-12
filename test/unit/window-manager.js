@@ -36,15 +36,15 @@ describe('Window Manager', () => {
     sinon.assert.calledWith(chrome.app.window.create, 'registration.html', expectedWindowOptions);
   });
 
-  it('should launch player', () => {
+  it('should launch content', () => {
     const expectedWindowOptions = {state: 'fullscreen', outerBounds: expectedDefaultOuterBounds};
 
-    windowManager.launchPlayer();
+    windowManager.launchContent();
 
-    sinon.assert.calledWith(chrome.app.window.create, 'player.html', expectedWindowOptions);
+    sinon.assert.calledWith(chrome.app.window.create, 'content.html', expectedWindowOptions);
   });
 
-  it('should close previous window when player is launched', () => {
+  it('should close previous window when content is launched', () => {
     const viewerWindow = {
       onClosed: {addListener() {}},
       contentWindow: {
@@ -62,18 +62,18 @@ describe('Window Manager', () => {
     const previousWindow = {close: sinon.spy()};
     chrome.app.window.current.returns(previousWindow);
 
-    windowManager.launchPlayer()
+    windowManager.launchContent()
 
     sinon.assert.calledOnce(previousWindow.close);
   });
 
-  it('should request keep awake when player is launched', () => {
-    windowManager.launchPlayer();
+  it('should request keep awake when content is launched', () => {
+    windowManager.launchContent();
 
     sinon.assert.calledWith(chrome.power.requestKeepAwake, 'display');
   });
 
-  it('should release keep awake when player is closed', () => {
+  it('should release keep awake when content is closed', () => {
     const previousWindow = {close: sinon.spy()};
     chrome.app.window.current.returns(previousWindow);
 
@@ -91,7 +91,7 @@ describe('Window Manager', () => {
     sandbox.stub(viewerWindow.contentWindow.document, 'querySelector').returns({addEventListener() {}});
     chrome.app.window.create.yields(viewerWindow);
 
-    windowManager.launchPlayer();
+    windowManager.launchContent();
 
     sinon.assert.calledOnce(chrome.power.releaseKeepAwake);
   });

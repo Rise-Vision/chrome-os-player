@@ -90,8 +90,8 @@ function createViewModel(document) {
       showError(`The Display ID <b>${displayId}</b> is invalid. `);
     },
 
-    launchPlayer() {
-      windowManager.launchPlayer();
+    launchContent() {
+      windowManager.launchContent();
     }
   }
 }
@@ -104,7 +104,7 @@ function normalizeDisplayId(id) {
 
 function createController(viewModel, registrationService) {
 
-  function saveDisplayIdAndLaunchPlayer(displayId) {
+  function saveDisplayIdAndLaunchContent(displayId) {
     chrome.storage.local.set({displayId});
     chrome.storage.local.remove('content');
 
@@ -113,9 +113,9 @@ function createController(viewModel, registrationService) {
     if (!networkChecks.haveCompleted()) {viewModel.showSpinner()}
 
     return networkChecks.getResult()
-    .then(() => viewModel.launchPlayer())
+    .then(() => viewModel.launchContent())
     .catch((err) => viewModel.networkErrorAcknowledged() ?
-      viewModel.launchPlayer() :
+      viewModel.launchContent() :
       viewModel.showNetworkError(err, displayId));
   }
 
@@ -129,7 +129,7 @@ function createController(viewModel, registrationService) {
       const displayId = normalizeDisplayId(typedDisplayId);
 
       return registrationService(displayId)
-        .then(() => saveDisplayIdAndLaunchPlayer(displayId))
+        .then(() => saveDisplayIdAndLaunchContent(displayId))
         .catch(() => viewModel.showInvalidDisplayIdError(typedDisplayId));
     },
     submitClaimId(id, name) {
@@ -144,7 +144,7 @@ function createController(viewModel, registrationService) {
       }
 
       return registrationService(id, name)
-      .then(displayId => saveDisplayIdAndLaunchPlayer(displayId))
+      .then(displayId => saveDisplayIdAndLaunchContent(displayId))
       .catch(() => viewModel.showInvalidClaimIdError(id));
     }
   };

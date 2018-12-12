@@ -22,7 +22,7 @@ describe('Countdown Screen', () => {
   afterEach(() => sandbox.restore());
 
   it('shows 10 second countdown', () => {
-    sandbox.stub(windowManager, 'launchPlayer').resolves();
+    sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
@@ -43,8 +43,8 @@ describe('Countdown Screen', () => {
     assert.equal(lastCall, 0);
   });
 
-  it('launches player after 10 second countdown', () => {
-    sandbox.stub(windowManager, 'launchPlayer').resolves();
+  it('launches content after 10 second countdown', () => {
+    sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
@@ -56,12 +56,12 @@ describe('Countdown Screen', () => {
     return Promise.resolve(clock.runAll())
     .then(()=>{
       sinon.assert.notCalled(viewModel.showNetworkError);
-      sinon.assert.called(windowManager.launchPlayer);
+      sinon.assert.called(windowManager.launchContent);
     });
   });
 
-  it('launches player after showing network error ', () => {
-    sandbox.stub(windowManager, 'launchPlayer').resolves();
+  it('launches content after showing network error ', () => {
+    sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'getResult').rejects();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
@@ -74,12 +74,12 @@ describe('Countdown Screen', () => {
     .then(()=>new Promise(res=>process.nextTick(()=>{clock.runAll(); res()})))
     .then(()=>{
       sinon.assert.called(viewModel.showNetworkError);
-      sinon.assert.called(windowManager.launchPlayer);
+      sinon.assert.called(windowManager.launchContent);
     });
   });
 
-  it('launches player on continue', () => {
-    sandbox.stub(windowManager, 'launchPlayer').resolves();
+  it('launches content on continue', () => {
+    sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.useFakeTimers();
@@ -87,7 +87,7 @@ describe('Countdown Screen', () => {
     const controller = screen.createController(viewModel);
 
     return controller.continue()
-    .then(()=>sinon.assert.called(windowManager.launchPlayer));
+    .then(()=>sinon.assert.called(windowManager.launchContent));
   });
 
   it('closes current window on cancel', () => {

@@ -31,7 +31,7 @@ function createViewModel(document, err, controller) {
 
   continueButton.addEventListener("click", evt=>{
     evt.preventDefault();
-    windowManager.launchPlayer();
+    windowManager.launchContent();
   });
 }
 

@@ -20,7 +20,7 @@ describe('background script', () => {
 
   after(() => chrome.flush());
 
-  it('should launch player when app is launched', () => {
+  it('should start registration when app is launched', () => {
     sandbox.stub(windowManager, 'startRegistration');
     chrome.storage.local.get.yields({});
 

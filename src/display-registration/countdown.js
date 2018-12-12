@@ -87,7 +87,7 @@ function createController(viewModel) {
     },
 
     continue() {
-      if (skipNetworkError) {return windowManager.launchPlayer()}
+      if (skipNetworkError) {return windowManager.launchContent()}
       skipNetworkError = true;
 
       if (!networkChecks.haveCompleted()) {
@@ -96,10 +96,10 @@ function createController(viewModel) {
       }
 
       return networkChecks.getResult()
-      .then(()=>windowManager.launchPlayer())
+      .then(()=>windowManager.launchContent())
       .catch(err=>{
         if (err.message === 'network-check-timeout') {
-          return windowManager.launchPlayer();
+          return windowManager.launchContent();
         }
 
         viewModel.showNetworkError(err.message);
