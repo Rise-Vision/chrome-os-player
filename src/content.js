@@ -13,6 +13,8 @@ const launchEnv = require('./launch-environment');
 const screenshot = require('./screenshot');
 const uptime = require('./uptime/uptime');
 const uptimeRendererHealth = require('./uptime/renderer-health');
+const scheduleParser = require('./scheduling/schedule-parser');
+const noViewerSchedulePlayer = require('./scheduling/schedule-player');
 
 const VIEWER_URL = "http://viewer.risevision.com/Viewer.html";
 
@@ -87,15 +89,10 @@ function fetchContent() {
     rebootScheduler.scheduleReboot(contentData);
     orientation.setupOrientation(contentData);
     uptime.setSchedule(contentData);
+    scheduleParser.setContent(contentData);
     return contentData;
   })
-  .then(contentData => {
-    return viewerMessaging.viewerCanReceiveContent()
-    .then(() => {
-      logger.log('sending content to viewer', contentData);
-      viewerMessaging.send({from: 'player', topic: 'content-update', newContent: contentData});
-    });
-  })
+  .then(contentData => loadContent(contentData))
   .catch((error) => {
     logger.error('player - error when fetching content', error);
     rebootScheduler.rebootNow();
@@ -103,16 +100,46 @@ function fetchContent() {
 }
 
 function loadViewerUrl() {
+  noViewerSchedulePlayer.stop();
+
   chrome.storage.local.get('displayId', ({displayId}) => {
-    const url = `${VIEWER_URL}?player=true&type=display&id=${displayId}`
-    const webview = document.querySelector('webview');
-    webview.src = url;
+    const url = `${VIEWER_URL}?player=true&type=display&id=${displayId}`;
+    loadUrl(url);
+  });
+}
+
+function loadUrl(url) {
+  const webview = document.querySelector('webview');
+  webview.src = url;
+}
+
+function isViewerLoaded() {
+  const webview = document.querySelector('webview');
+  const loadedUrl = webview.src;
+  return loadedUrl && loadedUrl.indexOf(VIEWER_URL) >= 0;
+}
+
+function loadContent(contentData) {
+  if (scheduleParser.hasOnlyRiseStorageURLItems()) {
+    return Promise.resolve(noViewerSchedulePlayer.start());
+  }
+
+  if (!isViewerLoaded()) {
+    loadViewerUrl();
+  }
+
+  return viewerMessaging.viewerCanReceiveContent()
+  .then(() => {
+    logger.log('sending content to viewer', contentData);
+    viewerMessaging.send({from: 'player', topic: 'content-update', newContent: contentData});
   });
 }
 
 function init() {
+  noViewerSchedulePlayer.setPlayUrlHandler(loadUrl);
+  noViewerSchedulePlayer.listenForNothingPlaying(() => loadUrl('about:blank'));
+
   launchEnv.init()
-  .then(() => loadViewerUrl())
   .then(() => {
     setUpMessaging()
       .then(storage.init)
