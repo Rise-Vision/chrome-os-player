@@ -82,13 +82,19 @@ function setupClientInfoLog() {
 }
 
 function fetchContent() {
-  Promise.all([contentLoader.loadContent(), viewerMessaging.viewerCanReceiveContent()]).then((values) => {
-    const [contentData] = values;
-    logger.log('sending content to viewer', contentData);
-    viewerMessaging.send({from: 'player', topic: 'content-update', newContent: contentData});
+  return contentLoader.loadContent()
+  .then(contentData => {
     rebootScheduler.scheduleReboot(contentData);
     orientation.setupOrientation(contentData);
     uptime.setSchedule(contentData);
+    return contentData;
+  })
+  .then(contentData => {
+    return viewerMessaging.viewerCanReceiveContent()
+    .then(() => {
+      logger.log('sending content to viewer', contentData);
+      viewerMessaging.send({from: 'player', topic: 'content-update', newContent: contentData});
+    });
   })
   .catch((error) => {
     logger.error('player - error when fetching content', error);
