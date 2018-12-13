@@ -14,6 +14,8 @@ const screenshot = require('./screenshot');
 const uptime = require('./uptime/uptime');
 const uptimeRendererHealth = require('./uptime/renderer-health');
 
+const VIEWER_URL = "http://viewer.risevision.com/Viewer.html";
+
 function setUpMessaging() {
   const webview = document.querySelector('webview');
   viewerMessaging.init(webview);
@@ -85,7 +87,7 @@ function fetchContent() {
     const [contentData] = values;
     logger.log('sending content to viewer', contentData);
     viewerMessaging.send({from: 'player', topic: 'content-update', newContent: contentData});
-    rebootScheduler.scheduleRebootFromViewerContents(contentData);
+    rebootScheduler.scheduleReboot(contentData);
     orientation.setupOrientation(contentData);
     uptime.setSchedule(contentData);
   })
@@ -95,8 +97,18 @@ function fetchContent() {
   });
 }
 
+function loadViewerUrl() {
+  chrome.storage.local.get('displayId', ({displayId}) => {
+    const url = `${VIEWER_URL}?player=true&type=display&id=${displayId}`
+    const webview = document.querySelector('webview');
+    webview.src = url;
+  });
+}
+
 function init() {
-  launchEnv.init().then(() => {
+  launchEnv.init()
+  .then(() => loadViewerUrl())
+  .then(() => {
     setUpMessaging()
       .then(storage.init)
       .then(licensing.init)

@@ -1,9 +1,11 @@
 /* eslint-disable */
+let scheduleContent = null;
+
 const RECURRENCE_TYPE = {
   DAILY: "Daily",
   WEEKLY: "Weekly",
   MONTHLY: "Monthly",
-  YEARLY: "Yearly"
+  YEARLY: "Yearly",
 };
 
 const DAY_OF_WEEK = {
@@ -13,15 +15,68 @@ const DAY_OF_WEEK = {
   WEDNESDAY: "Wed",
   THURSDAY: "Thu",
   FRIDAY: "Fri",
-  SATURDAY: "Sat"
+  SATURDAY: "Sat",
 };
 
 const DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
-function canPlay(item, d = new Date()) {
+module.exports = {
+  scheduledToPlay,
+  hasOnlyRiseStorageURLItems(data = scheduleContent) {
+    if (!module.exports.validateContent()) {return false;}
+
+    const expectedURLStart = "https://storage.googleapis.com/risemedialibrary";
+
+    return data.content.schedule.items.every(item=>{
+      if (item.type !== "url") {return false;}
+      if (!item.objectReference) {return false;}
+      if (typeof item.objectReference !== "string") {return false;}
+      if (!item.objectReference.startsWith(expectedURLStart)) {return false;}
+
+      return true;
+    });
+  },
+  millisUntilNextScheduledTime(now, sched = scheduleContent.content.schedule) {
+    return sched.items.concat(sched).reduce((nextMillis, item)=>{
+      if (is24x7(item)) {return nextMillis;}
+
+      return Math.min(
+        nextMillis,
+        millisUntilTime(now, item.startTime),
+        millisUntilTime(now, item.endTime)
+      );
+    }, Number.MAX_VALUE);
+  },
+  entireScheduleIs24x7(sched = scheduleContent.content.schedule) {
+    return sched.items.concat(sched).every(is24x7);
+  },
+  getCurrentPlayableItems(now, sched = scheduleContent.content.schedule) {
+    if (!scheduledToPlay(sched, now)) {return [];}
+
+    return sched.items.filter(item=>item.duration && scheduledToPlay(item, now));
+  },
+  setContent(data) {scheduleContent = data;},
+  getContent() {return Object.assign({}, scheduleContent);},
+  validateContent(data = scheduleContent) {
+    if (!data) {return false;}
+    if (!data.content) {return false;}
+    if (!data.content.schedule) {return false;}
+    if (!data.content.schedule.items) {return false;}
+    if (!data.content.schedule.items.length) {return false;}
+    if (typeof data.content.schedule.items[0] !== "object") {return false;}
+
+    return true;
+  }
+};
+
+function is24x7(item) {
   if (!item.timeDefined || !item.startDate) {
     return true;
   }
+}
+
+function scheduledToPlay(item, d = new Date()) {
+  if (is24x7(item)) {return true;}
 
   const t = _toTime(d),
     startDate = _toDate(item.startDate),
@@ -140,6 +195,17 @@ function _toTime(d) {
   return newDate;
 }
 
+function millisUntilTime(now, timeDate) {
+  if (!timeDate || !now) {return Number.MAX_VALUE;}
+
+  let timeComponent = new Date(timeDate);
+  timeComponent.setFullYear(now.getFullYear());
+  timeComponent.setMonth(now.getMonth());
+  timeComponent.setDate(now.getDate());
+
+  return timeComponent > now ? timeComponent - now : Number.MAX_VALUE;
+}
+
 function _daysInMonth(d) {
   const daysInMonths = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 	// check is leap year
@@ -173,11 +239,7 @@ function _isRecurrenceDay(weekday, recurrenceDaysOfWeek) {
 
   if (recurrenceDaysOfWeek && recurrenceDaysOfWeek.indexOf(currDayCode) >= 0) {
     return true;
+  } else {
+    return false;
   }
-
-  return false;
 }
-
-module.exports = {
-  canPlay
-};

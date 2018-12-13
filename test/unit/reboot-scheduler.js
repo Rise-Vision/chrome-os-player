@@ -16,7 +16,7 @@ describe('Reboot Scheduler', () => {
 
   it('should not schedule reboot when content is empty', () => {
     sandbox.stub(envVars, 'isKioskSession').returns(true);
-    rebootScheduler.scheduleRebootFromViewerContents();
+    rebootScheduler.scheduleReboot();
 
     sinon.assert.notCalled(chrome.alarms.create);
   });
@@ -25,7 +25,7 @@ describe('Reboot Scheduler', () => {
     sandbox.stub(envVars, 'isKioskSession').returns(true);
     const content = {};
 
-    rebootScheduler.scheduleRebootFromViewerContents(content);
+    rebootScheduler.scheduleReboot(content);
 
     sinon.assert.notCalled(chrome.alarms.create);
   });
@@ -34,7 +34,7 @@ describe('Reboot Scheduler', () => {
     sandbox.stub(envVars, 'isKioskSession').returns(true);
     const content = {display: {restartEnabled: false}};
 
-    rebootScheduler.scheduleRebootFromViewerContents(content);
+    rebootScheduler.scheduleReboot(content);
 
     sinon.assert.notCalled(chrome.alarms.create);
   });
@@ -43,7 +43,7 @@ describe('Reboot Scheduler', () => {
     sandbox.stub(envVars, 'isKioskSession').returns(false);
     const content = {display: {restartEnabled: false, restartTime: 'tomorrow'}};
 
-    rebootScheduler.scheduleRebootFromViewerContents(content);
+    rebootScheduler.scheduleReboot(content);
 
     sinon.assert.notCalled(chrome.alarms.create);
   });
@@ -53,7 +53,7 @@ describe('Reboot Scheduler', () => {
 
     const content = {display: {restartEnabled: true, restartTime: 'tomorrow'}};
 
-    rebootScheduler.scheduleRebootFromViewerContents(content);
+    rebootScheduler.scheduleReboot(content);
 
     sinon.assert.notCalled(chrome.alarms.create);
     sinon.assert.calledWith(logger.log, 'scheduled reboot error', 'invalid reboot schedule time: tomorrow')
@@ -68,7 +68,7 @@ describe('Reboot Scheduler', () => {
     const mm = `${restartDate.getMinutes()}`.padStart(2, '0');
     const content = {display: {restartEnabled: true, restartTime: `${hh}:${mm}`}};
 
-    rebootScheduler.scheduleRebootFromViewerContents(content, nowDate);
+    rebootScheduler.scheduleReboot(content, nowDate);
 
     chrome.alarms.onAlarm.dispatch({name: 'restart'});
 

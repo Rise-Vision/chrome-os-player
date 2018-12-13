@@ -15,7 +15,7 @@ function shouldSchedule(content) {
   return true;
 }
 
-function scheduleRebootFromViewerContents(content, nowDate = Date.now()) {
+function scheduleReboot(content, nowDate = Date.now()) {
   if (!shouldSchedule(content)) {return;}
 
   const rebootDate = parseRebootDate(content.display.restartTime, nowDate);
@@ -51,7 +51,7 @@ function restart() {
 }
 
 module.exports = {
-  scheduleRebootFromViewerContents,
+  scheduleReboot,
   rebootNow,
   restart
 }

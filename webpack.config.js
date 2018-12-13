@@ -4,7 +4,7 @@ module.exports = {
   entry: {
     background: path.join(__dirname, "src", "background.js"),
     registration: path.join(__dirname, "src", "display-registration/registration.js"),
-    viewer: path.join(__dirname, "src", "viewer.js")
+    content: path.join(__dirname, "src", "content.js")
   },
   output: {
     path: path.join(__dirname, "app"),

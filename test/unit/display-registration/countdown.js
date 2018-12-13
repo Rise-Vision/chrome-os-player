@@ -22,14 +22,13 @@ describe('Countdown Screen', () => {
   afterEach(() => sandbox.restore());
 
   it('shows 10 second countdown', () => {
-    sandbox.stub(windowManager, 'launchViewer').resolves();
+    sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
     const clock = sandbox.useFakeTimers();
 
-    const displayId = 'displayId';
-    screen.createController(viewModel, displayId);
+    screen.createController(viewModel);
 
     clock.runAll();
 
@@ -44,62 +43,58 @@ describe('Countdown Screen', () => {
     assert.equal(lastCall, 0);
   });
 
-  it('launches viewer after 10 second countdown', () => {
-    sandbox.stub(windowManager, 'launchViewer').resolves();
+  it('launches content after 10 second countdown', () => {
+    sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
     sandbox.spy(viewModel, 'showNetworkError');
     const clock = sandbox.useFakeTimers();
 
-    const displayId = 'displayId';
-    screen.createController(viewModel, displayId);
+    screen.createController(viewModel);
 
     return Promise.resolve(clock.runAll())
     .then(()=>{
       sinon.assert.notCalled(viewModel.showNetworkError);
-      sinon.assert.calledWith(windowManager.launchViewer, displayId);
+      sinon.assert.called(windowManager.launchContent);
     });
   });
 
-  it('launches viewer after showing network error ', () => {
-    sandbox.stub(windowManager, 'launchViewer').resolves();
+  it('launches content after showing network error ', () => {
+    sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'getResult').rejects();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.spy(viewModel, 'updateSecondsRemaining');
     sandbox.spy(viewModel, 'showNetworkError');
     const clock = sandbox.useFakeTimers();
 
-    const displayId = 'displayId';
-    screen.createController(viewModel, displayId);
+    screen.createController(viewModel);
 
     return Promise.resolve(clock.runAll())
     .then(()=>new Promise(res=>process.nextTick(()=>{clock.runAll(); res()})))
     .then(()=>{
       sinon.assert.called(viewModel.showNetworkError);
-      sinon.assert.calledWith(windowManager.launchViewer, displayId);
+      sinon.assert.called(windowManager.launchContent);
     });
   });
 
-  it('launches viewer on continue', () => {
-    sandbox.stub(windowManager, 'launchViewer').resolves();
+  it('launches content on continue', () => {
+    sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
     sandbox.stub(networkChecks, 'getResult').resolves();
     sandbox.useFakeTimers();
 
-    const displayId = 'displayId';
-    const controller = screen.createController(viewModel, displayId);
+    const controller = screen.createController(viewModel);
 
     return controller.continue()
-    .then(()=>sinon.assert.called(windowManager.launchViewer));
+    .then(()=>sinon.assert.called(windowManager.launchContent));
   });
 
   it('closes current window on cancel', () => {
     sandbox.stub(windowManager, 'closeCurrentWindow');
     sandbox.useFakeTimers();
 
-    const displayId = 'displayId';
-    const controller = screen.createController(viewModel, displayId);
+    const controller = screen.createController(viewModel);
 
     controller.cancel();
 

@@ -25,7 +25,7 @@ describe('Window Manager', () => {
     chrome.flush();
   });
 
-  it('should launch player', () => {
+  it('should launch registration', () => {
     const expectedWindowOptions = {
       id: 'registration',
       outerBounds: expectedDefaultOuterBounds
@@ -36,16 +36,15 @@ describe('Window Manager', () => {
     sinon.assert.calledWith(chrome.app.window.create, 'registration.html', expectedWindowOptions);
   });
 
-  it('should launch viewer', () => {
+  it('should launch content', () => {
     const expectedWindowOptions = {state: 'fullscreen', outerBounds: expectedDefaultOuterBounds};
 
-    const displayId = 'displayId';
-    windowManager.launchViewer(displayId);
+    windowManager.launchContent();
 
-    sinon.assert.calledWith(chrome.app.window.create, 'viewer.html', expectedWindowOptions);
+    sinon.assert.calledWith(chrome.app.window.create, 'content.html', expectedWindowOptions);
   });
 
-  it('should close previous window when viewer is launched', () => {
+  it('should close previous window when content is launched', () => {
     const viewerWindow = {
       onClosed: {addListener() {}},
       contentWindow: {
@@ -63,20 +62,18 @@ describe('Window Manager', () => {
     const previousWindow = {close: sinon.spy()};
     chrome.app.window.current.returns(previousWindow);
 
-    const displayId = 'displayId';
-    return windowManager.launchViewer(displayId).then(() => {
-      sinon.assert.calledOnce(previousWindow.close);
-    });
+    windowManager.launchContent()
+
+    sinon.assert.calledOnce(previousWindow.close);
   });
 
-  it('should request keep awake when viewer is launched', () => {
-    const displayId = 'displayId';
-    windowManager.launchViewer(displayId);
+  it('should request keep awake when content is launched', () => {
+    windowManager.launchContent();
 
     sinon.assert.calledWith(chrome.power.requestKeepAwake, 'display');
   });
 
-  it('should release keep awake when viewer is closed', () => {
+  it('should release keep awake when content is closed', () => {
     const previousWindow = {close: sinon.spy()};
     chrome.app.window.current.returns(previousWindow);
 
@@ -94,10 +91,9 @@ describe('Window Manager', () => {
     sandbox.stub(viewerWindow.contentWindow.document, 'querySelector').returns({addEventListener() {}});
     chrome.app.window.create.yields(viewerWindow);
 
-    const displayId = 'displayId';
-    return windowManager.launchViewer(displayId).then(() => {
-      sinon.assert.calledOnce(chrome.power.releaseKeepAwake);
-    });
+    windowManager.launchContent();
+
+    sinon.assert.calledOnce(chrome.power.releaseKeepAwake);
   });
 
   it('should launch web view', () => {

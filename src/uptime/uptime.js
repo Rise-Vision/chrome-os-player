@@ -1,6 +1,6 @@
 const messagingServiceClient = require('../messaging/messaging-service-client');
 const logger = require('../logging/logger');
-const scheduleParser = require('./schedule-parser');
+const scheduleParser = require('../scheduling/schedule-parser');
 const rendererHealth = require('./renderer-health');
 
 const uptimeInterval = 300000;
@@ -24,7 +24,7 @@ function calculate() {
 
   rendererHealth.check().then(rendererResult => {
     const connectedToMS = messagingServiceClient.isConnected();
-    const shouldBePlaying = scheduleParser.canPlay(schedule);
+    const shouldBePlaying = scheduleParser.scheduledToPlay(schedule);
     logger.logUptime(connectedToMS, rendererResult, shouldBePlaying);
   })
   .catch(err => logger.error('uptime - error', err));
