@@ -137,7 +137,7 @@ function loadContent(contentData) {
 
 function init() {
   noViewerSchedulePlayer.setPlayUrlHandler(loadUrl);
-  noViewerSchedulePlayer.listenForNothingPlaying(() => loadUrl('about:blank'));
+  noViewerSchedulePlayer.listenForNothingPlaying(() => loadUrl(chrome.runtime.getURL('black-screen.html')));
 
   launchEnv.init()
   .then(() => {
