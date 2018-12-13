@@ -32,10 +32,11 @@ describe('Viewer Messaging', () => {
   });
 
   it('should indicate viewer can receive content if it has already received data-handler-registered', () => {
+    const promise = viewerMessaging.viewerCanReceiveContent();
     const data = {from: 'viewer', message: 'data-handler-registered'};
     onMessageEvent({data, preventDefault() {}});
 
-    return viewerMessaging.viewerCanReceiveContent();
+    return promise;
   });
 
   it('should indicate viewer can receive content for multiple callers', () => {
