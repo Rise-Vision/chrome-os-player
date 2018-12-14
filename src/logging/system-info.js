@@ -46,10 +46,15 @@ function getId() {
 
 function getPlayerVersion(options = {includeBetaPrefix: true}) {
   const manifest = chrome.runtime.getManifest();
-  if (options.includeBetaPrefix && manifest.name.includes('Beta')) {
+  if (options.includeBetaPrefix && isBeta()) {
     return `beta_${manifest.version}`;
   }
   return manifest.version;
+}
+
+function isBeta() {
+  const manifest = chrome.runtime.getManifest();
+  return manifest.name.includes('Beta');
 }
 
 function getPlayerName() {
@@ -108,5 +113,6 @@ module.exports = {
   getPlayerName,
   getChromeVersion,
   getChromeOSVersion,
-  getAppId
+  getAppId,
+  isBeta
 }
