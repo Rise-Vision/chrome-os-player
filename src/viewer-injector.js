@@ -1,4 +1,6 @@
 /* eslint-disable max-statements */
+const playerConfiguration = require('./player-configuration');
+
 function setUpMessaging() {
   const eventHandlers = {};
   let appWindow = null;
@@ -72,16 +74,20 @@ function setUpMessaging() {
   window.receiveFromPlayer = registerMessageHandler;
 }
 
-function generateScriptText(fn) {
+function sanitize(fnStr) {
   // Escape double-quotes.
   // Insert newlines correctly.
-  const fnText = fn.toString()
-    .replace(/"/g, '\\"')
-    .replace(/(\r?\n|\r)/g, '\\n');
+  return fnStr.replace(/"/g, '\\"').replace(/(\r?\n|\r)/g, '\\n');
+}
+
+function generateScriptText(fn) {
+  const object = playerConfiguration.getRisePlayerConfiguration();
+  const playerConfigurationFn = sanitize(`window.getRisePlayerConfiguration = function() { return ${JSON.stringify(object)} }`);
+  const fnText = sanitize(fn.toString());
 
   const scriptText = `(function() {
       var script = document.createElement("script");
-      script.textContent = "(function() { (${fnText})(); })()";
+      script.textContent = "(function() { (${fnText})(); (${playerConfigurationFn})(); })()";
       (document.head || document.documentElement).appendChild(script);
       })()`;
   return scriptText;
