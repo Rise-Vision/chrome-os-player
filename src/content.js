@@ -100,6 +100,7 @@ function fetchContent() {
 }
 
 function loadViewerUrl() {
+  viewerMessaging.reset();
   noViewerSchedulePlayer.stop();
 
   chrome.storage.local.get('displayId', ({displayId}) => {

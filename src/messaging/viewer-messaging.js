@@ -8,7 +8,6 @@ const dataHandlerRegisteredObserver = {
       const fn = this.resolvers.pop();
       fn();
     }
-    this.messageReceived = false;
   }
 };
 const messageHandlers = {};
@@ -99,11 +98,17 @@ function viewerCanReceiveContent() {
   });
 }
 
+function reset() {
+  dataHandlerRegisteredObserver.resolvers = [];
+  dataHandlerRegisteredObserver.messageReceived = false;
+}
+
 module.exports = {
   init,
   on,
   once,
   removeAllListeners,
   send,
-  viewerCanReceiveContent
+  viewerCanReceiveContent,
+  reset
 }
