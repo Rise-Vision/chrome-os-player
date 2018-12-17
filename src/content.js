@@ -37,8 +37,6 @@ function setUpMessaging() {
   messaging.on('restart-request', () => rebootScheduler.restart());
   messaging.on('screenshot-request', (request) => screenshot.handleRequest(webview, request));
 
-  setupClientInfoLog();
-
   return messaging.init()
   .catch(() => logger.log('MS connection failed on init'));
 }
@@ -74,13 +72,25 @@ function setupResponsivenessEvents(webview) {
 }
 
 function setupClientInfoLog() {
+  viewerMessaging.removeAllListeners('viewer-config');
   viewerMessaging.on('viewer-config', viewerConfig => {
     logger.log('viewer config received', viewerConfig);
+    licensing.clearAuthorizationStatusListeners();
     licensing.onAuthorizationStatus(isAuthorized => {
       logger.log('authorization status received', isAuthorized);
       logger.logClientInfo(viewerConfig, isAuthorized);
     });
+    licensing.notifyAuthorizationStatusListeners();
   });
+}
+
+function setupClientInfoLogNoViewer() {
+  licensing.clearAuthorizationStatusListeners();
+  licensing.onAuthorizationStatus(isAuthorized => {
+    logger.log('authorization status received', isAuthorized);
+    logger.logClientInfo({width: window.innerWidth, height: window.innerHeight}, isAuthorized);
+  });
+  licensing.notifyAuthorizationStatusListeners();
 }
 
 function fetchContent() {
@@ -122,10 +132,12 @@ function isViewerLoaded() {
 
 function loadContent(contentData) {
   if (scheduleParser.hasOnlyRiseStorageURLItems()) {
+    setupClientInfoLogNoViewer();
     return Promise.resolve(noViewerSchedulePlayer.start());
   }
 
   if (!isViewerLoaded()) {
+    setupClientInfoLog();
     loadViewerUrl();
   }
 

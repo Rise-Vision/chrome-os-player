@@ -15,7 +15,7 @@ const productCodes = {
 
 const subscriptions = {};
 let displayId = null;
-const authorizationListeners = [];
+let authorizationListeners = [];
 
 function init() {
   viewerMessaging.on('licensing-request', sendLicensingUpdate);
@@ -33,6 +33,10 @@ function init() {
 
 function onAuthorizationStatus(listener) {
   authorizationListeners.push(listener);
+}
+
+function clearAuthorizationStatusListeners() {
+  authorizationListeners = [];
 }
 
 function notifyAuthorizationStatusListeners() {
@@ -113,8 +117,9 @@ function products() {
   return util.objectValues(productCodes);
 }
 
-
 module.exports = {
   init,
-  onAuthorizationStatus
+  onAuthorizationStatus,
+  clearAuthorizationStatusListeners,
+  notifyAuthorizationStatusListeners
 };
