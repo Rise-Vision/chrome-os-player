@@ -33,6 +33,7 @@ describe('Storage Watchlist', () => {
       sandbox.stub(db.fileMetadata, 'put').resolves();
       sandbox.stub(db.watchlist, 'put').resolves();
       sandbox.stub(db.watchlist, 'setLastChanged');
+      sandbox.stub(db.fileMetadata, 'getAllFolders').returns([]);
       sandbox.stub(watch, 'requestMSUpdate').resolves();
     });
 
@@ -197,6 +198,35 @@ describe('Storage Watchlist', () => {
         sinon.assert.notCalled(db.fileMetadata.put);
 
         sinon.assert.calledWith(db.watchlist.setLastChanged, 123456);
+      });
+    });
+
+    it('rewatches folders that are present in local metadata but missing from remote watchlist', () => {
+      const folderPath = "my-bucket/my-folder";
+
+      db.fileMetadata.getAllFolders.restore();
+      sandbox.stub(db.fileMetadata, 'getAllFolders')
+      .returns([{filePath: folderPath, version: "0"}]);
+
+      const testEntries = [
+        {filePath: 'bucket/file1', status: 'CURRENT', version: '1'},
+        {filePath: 'bucket/file2', status: 'CURRENT', version: '2'},
+        {filePath: 'bucket/file3', status: 'CURRENT', version: '3'}
+      ];
+
+      sandbox.stub(db.fileMetadata, 'get').callsFake(filePath =>
+        testEntries.find(entry => entry.filePath === filePath)
+      );
+      sandbox.stub(db.watchlist, 'allEntries').returns(testEntries);
+
+      const remoteWatchlist = {
+        'bucket/file2': '2',
+        'bucket/file3': '3'
+      };
+
+      return watchlist.refresh(remoteWatchlist, 123456)
+      .then(() => {
+        sinon.assert.calledWithMatch(watch.requestMSUpdate, {filePath: folderPath, topic: 'watch'});
       });
     });
 

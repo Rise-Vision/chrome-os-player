@@ -67,6 +67,19 @@ module.exports = {
         return entry.filePath.startsWith(folderPath) && !entry.filePath.endsWith("/");
       })
     },
+    getAllFolders() {
+      return database.getCollection("metadata").where(entry => {
+        return entry.filePath.endsWith("/");
+      })
+    },
+    isVersionMismatch(filePath, version) {
+      const entry = database.getCollection("metadata").by("filePath", filePath);
+
+      if (!entry) {return true;}
+      if (!entry.version) {return true;}
+
+      return entry.version !== version;
+    },
     getStale: ()=>database.getCollection("metadata").find({status: "STALE"}),
     delete(filePath) {
       if (!filePath) {throw Error("missing params");}
