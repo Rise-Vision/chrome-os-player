@@ -137,6 +137,7 @@ describe('Storage Messaging', () => {
     const message = {msg: 'ok', topic: 'watch-result', filePath, version, token, watchlistLastChanged: '1522699819330'};
 
     sandbox.stub(localMessaging, 'sendFileUpdate').resolves();
+    sandbox.stub(db.fileMetadata, 'isVersionMismatch').returns(true);
 
     return messaging.handleWatchResult(message).then(() => {
       sinon.assert.calledWith(db.watchlist.put, {filePath, version, token, status: 'STALE'});

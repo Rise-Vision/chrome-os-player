@@ -45,6 +45,18 @@ function markMissingFilesAsUnknown(remoteWatchlist) {
   }));
 }
 
+function rewatchMissingFolders(remoteWatchlist) {
+  db.fileMetadata.getAllFolders()
+  .filter(entry=>!remoteWatchlist[entry.filePath])
+  .forEach(entry=>{
+    console.log(entry);
+    watch.requestMSUpdate({
+      topic: "watch",
+      filePath: entry.filePath
+    }, entry);
+  });
+}
+
 function refresh(watchlist, lastChanged) {
   const filePaths = Object.keys(watchlist);
   logger.log(`storage - received WATCHLIST-RESULT`, {lastChanged, filePaths});
@@ -70,7 +82,8 @@ function refresh(watchlist, lastChanged) {
       refreshUpdatedFile(metaData);
   }))
   .then(() => markMissingFilesAsUnknown(watchlist))
-  .then(() => db.watchlist.setLastChanged(lastChanged));
+  .then(() => db.watchlist.setLastChanged(lastChanged))
+  .then(() => rewatchMissingFolders(watchlist));
 }
 
 module.exports = {
