@@ -19,7 +19,8 @@ describe('Viewer Messaging', () => {
 
   beforeEach(() => {
     sandbox.stub(window, 'addEventListener').callsFake((event, listener) => onMessageEvent = listener);
-    viewerMessaging.init(webview);
+    viewerMessaging.init();
+    viewerMessaging.configure(webview);
   })
 
   it('should indicate viewer can receive content when it receives data-handler-registered', () => {
