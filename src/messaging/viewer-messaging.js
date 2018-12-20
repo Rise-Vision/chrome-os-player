@@ -13,17 +13,15 @@ const dataHandlerRegisteredObserver = {
 const messageHandlers = {};
 let messageSender = null;
 
-function createMessageSender(webview) {
+function createMessageSender(webview, targetOrigin = webview.src) {
   return {
     sendMessage(message) {
-      webview.contentWindow.postMessage(message, webview.src);
+      webview.contentWindow.postMessage(message, targetOrigin);
     }
   }
 }
 
-function init(webview) {
-  messageSender = createMessageSender(webview);
-
+function init() {
   dataHandlerRegisteredObserver.init();
 
   on('data-handler-registered', () => {
@@ -103,6 +101,10 @@ function reset() {
   dataHandlerRegisteredObserver.messageReceived = false;
 }
 
+function configure(webview) {
+  messageSender = createMessageSender(webview);
+}
+
 module.exports = {
   init,
   on,
@@ -110,5 +112,6 @@ module.exports = {
   removeAllListeners,
   send,
   viewerCanReceiveContent,
-  reset
+  reset,
+  configure
 }

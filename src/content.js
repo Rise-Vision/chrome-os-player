@@ -122,6 +122,7 @@ function loadViewerUrl() {
 function loadUrl(url) {
   const webview = document.querySelector('webview');
   webview.src = url;
+  viewerMessaging.configure(webview);
 }
 
 function isViewerLoaded() {
