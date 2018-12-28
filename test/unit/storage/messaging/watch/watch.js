@@ -179,32 +179,15 @@ describe("Storage Watch", () => {
       });
     });
 
-    it("should broadcast FILE-UPDATE with STALE when token is provided and version is mismatched", () => {
+    it("should broadcast FILE-UPDATE with STALE when token is provided", () => {
       const msMessage = {
         filePath: "risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/new_photos/screenshot.jpg",
         version: "123",
         token: {}
       };
-
-      sandbox.stub(db.fileMetadata, 'isVersionMismatch').returns(true);
 
       return watch.msResult(msMessage).then(() => {
         sinon.assert.calledWith(localMessaging.sendFileUpdate, {filePath: msMessage.filePath, status: "STALE", version: msMessage.version});
-      });
-    });
-
-    it("should broadcast FILE-UPDATE with CURRENT when token is provided and version is matched", () => {
-      const msMessage = {
-        filePath: "risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/new_photos/screenshot.jpg",
-        version: "123",
-        token: {}
-      };
-
-      sandbox.stub(db.fileMetadata, 'isVersionMismatch').returns(false);
-      sandbox.stub(fileSystem, 'readCachedFile').resolves();
-
-      return watch.msResult(msMessage).then(() => {
-        sinon.assert.calledWithMatch(localMessaging.sendFileUpdate, {filePath: msMessage.filePath, status: "CURRENT", version: msMessage.version});
       });
     });
 

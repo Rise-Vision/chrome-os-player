@@ -29,9 +29,7 @@ function handleFileWatchResult(message) {
 
   logger.log(`storage - received version ${version} for ${filePath}`);
 
-  const status = token && db.fileMetadata.isVersionMismatch(filePath, version) ?
-    'STALE' :
-    'CURRENT';
+  const status = token ? 'STALE' : 'CURRENT';
 
   return update.updateWatchlistAndMetadata({filePath, version, status, token})
   .then(() => sendFileUpdate({filePath, status, version}))
