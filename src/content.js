@@ -132,7 +132,7 @@ function isViewerLoaded() {
 }
 
 function loadContent(contentData) {
-  if (scheduleParser.hasOnlyRiseStorageURLItems()) {
+  if (scheduleParser.hasOnlyURLItems()) {
     setupClientInfoLogNoViewer();
     return Promise.resolve(noViewerSchedulePlayer.start());
   }
