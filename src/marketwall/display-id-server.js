@@ -59,14 +59,22 @@ function sendResponse(socketId, httpStatus = '', content = '') {
   console.log(`sending response:\n${headerText + content}`); // eslint-disable-line prefer-template
   const responseBuffer = util.stringToArrayBuffer(headerText + content);
 
-  tcp.send(socketId, responseBuffer, sendResult=>{
-    console.log(`sent`, sendResult);
-
-    if (chrome.runtime.lastError) {
-      logger.error('marketwall - send display id error', Error(chrome.runtime.lastError.message));
+  tcp.getInfo(socketId, socketInfo => {
+    if (socketInfo && !socketInfo.connected) {
+      sockets.delete(socketId);
+      tcp.close(socketId);
+      return;
     }
 
-    sockets.delete(socketId);
-    tcp.disconnect(socketId, ()=>tcp.close(socketId))
-  })
+    tcp.send(socketId, responseBuffer, sendResult => {
+      console.log(`sent`, sendResult);
+
+      if (chrome.runtime.lastError) {
+        logger.error('marketwall - send display id error', Error(chrome.runtime.lastError.message));
+      }
+
+      sockets.delete(socketId);
+      tcp.disconnect(socketId, () => tcp.close(socketId));
+    });
+  });
 }
