@@ -59,7 +59,7 @@ function sendResponse(socketId, httpStatus = '', content = '') {
   console.log(`sending response:\n${headerText + content}`); // eslint-disable-line prefer-template
   const responseBuffer = util.stringToArrayBuffer(headerText + content);
 
-  chrome.sockets.tcp.getInfo(socketId, socketInfo => {
+  tcp.getInfo(socketId, socketInfo => {
     if (socketInfo && !socketInfo.connected) {
       sockets.delete(socketId);
       tcp.close(socketId);
