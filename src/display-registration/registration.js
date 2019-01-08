@@ -54,7 +54,7 @@ function init() {
   function goToActivation() {
     logger.log('showing display activation screen');
     body.innerHTML = displayActivationHtml;
-    displayActivationScreen.init(document, goToDisplayId);
+    displayActivationScreen.init(document, displayIdValidator);
     const displayIdLink = document.getElementById('displayIdLink');
     displayIdLink.addEventListener('click', (event) => {
       event.preventDefault();
