@@ -96,7 +96,6 @@ function createViewModel(document) {
   }
 }
 
-
 function normalizeDisplayId(id) {
   const LEGACY_ID_REGEX = /^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$/;
   return id.match(LEGACY_ID_REGEX) ? id.toLowerCase() : id.toUpperCase().trim();

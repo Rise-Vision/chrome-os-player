@@ -1,3 +1,5 @@
+const displayActivationHtml = require('./display-activation.html');
+const displayActivationScreen = require('./display-activation');
 const displayIdHtml = require('./display-id.html');
 const displayIdValidator = require('./display-id-validator');
 const claimIdHtml = require('./claim-id.html');
@@ -49,6 +51,17 @@ function init() {
     });
   }
 
+  function goToActivation() {
+    logger.log('showing display activation screen');
+    body.innerHTML = displayActivationHtml;
+    displayActivationScreen.init(document, goToDisplayId);
+    const displayIdLink = document.getElementById('displayIdLink');
+    displayIdLink.addEventListener('click', (event) => {
+      event.preventDefault();
+      goToDisplayId();
+    });
+  }
+
   function showCountdown(displayId) {
     logger.log('showing countdown screen');
     body.innerHTML = countdownHtml;
@@ -85,12 +98,12 @@ function init() {
         }
       });
     } else {
-      goToDisplayId();
+      goToActivation();
     }
   });
 
   networkChecks.checkSites()
-  .catch(err => logger.error('network check error', err))
+  .catch(err => logger.error('network check error', err));
 }
 
 window.addEventListener('DOMContentLoaded', () => {
