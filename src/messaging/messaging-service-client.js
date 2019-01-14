@@ -9,7 +9,7 @@ let connection = null;
 let readyState = null;
 
 function connect(displayId, machineId) {
-  const url = `https://services.risevision.com/messaging/primus/?displayId=${displayId}&machineId=${machineId}`;
+  const url = `https://services-stage.risevision.com/messaging/primus/?displayId=${displayId}&machineId=${machineId}`;
   connection = Primus.connect(url, {
     reconnect: {
       max: 1800000,

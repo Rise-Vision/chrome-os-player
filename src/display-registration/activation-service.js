@@ -1,6 +1,6 @@
 const systemInfo = require('../logging/system-info');
 
-const activationServiceUrl = 'http://127.0.0.1:9191';
+const activationServiceUrl = 'https://display-activation-poc.appspot.com';
 
 function fetchActivationCode() {
   return systemInfo.getMachineId()

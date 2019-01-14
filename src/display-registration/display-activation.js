@@ -18,12 +18,11 @@ function saveDisplayIdAndLaunchContent(displayId) {
   return windowManager.launchContent();
 }
 
-function init(document, displayIdValidator) {
+function init(document) {
   messaging.init().then(() => console.log('MS init'));
   messaging.on('display-activation', ({displayId}) => {
-    displayIdValidator(displayId)
-      .then(() => saveDisplayIdAndLaunchContent(displayId))
-      .catch(() => console.error('Cannot activate. Invalid display id.', displayId));
+    // eslint-disable-next-line no-magic-numbers
+    setTimeout(() => saveDisplayIdAndLaunchContent(displayId), 2000);
   });
 
   const viewModel = createViewModel(document);
