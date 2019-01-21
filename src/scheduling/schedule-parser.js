@@ -22,13 +22,16 @@ const DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
 
 module.exports = {
   scheduledToPlay,
-  hasOnlyURLItems(data = scheduleContent) {
-    if (!module.exports.validateContent()) {return false;}
+  hasOnlyNoViewerURLItems(data = scheduleContent) {
+    if (!module.exports.validateContent(data)) {return false;}
+
+    const noViewerURLs = /(http(s)?:\/\/)?storage\.googleapis\.com\/risemedialibrary.+|(http(s)?:\/\/)?widgets\.risevision\.com\/.+/;
 
     return data.content.schedule.items.every(item=>{
       if (item.type !== "url") {return false;}
       if (!item.objectReference) {return false;}
       if (typeof item.objectReference !== "string") {return false;}
+      if (!noViewerURLs.test(item.objectReference)) {return false;}
 
       return true;
     });

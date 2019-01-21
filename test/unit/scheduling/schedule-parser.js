@@ -220,4 +220,64 @@ describe("Schedule Parser", () => {
 
     assert.equal(scheduleParser.scheduledToPlay(timeline, testDate), false);
   });
+
+  it("should detect when there is only no viewer supported URL", () => {
+    const urlItem = {
+      type: "url",
+      objectReference: ""
+    };
+
+    const data = {
+      content: {
+        schedule: {
+          items: [urlItem]
+        }
+      }
+    };
+
+    urlItem.objectReference = "storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), true);
+
+    urlItem.objectReference = "http://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), true);
+
+    urlItem.objectReference = "https://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), true);
+
+    urlItem.objectReference = "http://widgets.risevision.com/staging/pages/2018.12.28.14.00/src/rise-data-image.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), true);
+
+    urlItem.objectReference = "https://widgets.risevision.com/staging/pages/2018.12.28.14.00/src/rise-data-image.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), true);
+  });
+
+  it("should return false when not every item supports no viewer mode", () => {
+    const urlItem = {
+      type: "url",
+      objectReference: ""
+    };
+
+    const data = {
+      content: {
+        schedule: {
+          items: [urlItem, { type: "url", objectReference: "www.risevision.com" }]
+        }
+      }
+    };
+
+    urlItem.objectReference = "storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), false);
+
+    urlItem.objectReference = "http://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), false);
+
+    urlItem.objectReference = "https://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), false);
+
+    urlItem.objectReference = "http://widgets.risevision.com/staging/pages/2018.12.28.14.00/src/rise-data-image.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), false);
+
+    urlItem.objectReference = "https://widgets.risevision.com/staging/pages/2018.12.28.14.00/src/rise-data-image.html";
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), false);
+  });
 });
