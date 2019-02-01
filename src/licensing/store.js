@@ -13,8 +13,14 @@ const ACTIVE_STATUSES = ["Free", "On Trial", "Subscribed"];
 const SUBSCRIPTION_API_SERVER = 'store-dot-rvaserver2.appspot.com';
 const STORAGE_PRODUCT_CODE = 'b0cba08a4baa0c62b8cdc621b6f6a124f89a03db';
 const STORAGE_SUBSCRIPTION_URL = `https://${SUBSCRIPTION_API_SERVER}/v1/company/CID/product/status?pc=${STORAGE_PRODUCT_CODE}`;
-const ONE_DAY_MS = 24 * 60 * 60 * 1000; // eslint-disable-line no-magic-numbers
+const MINUTES = 60 * 1000; // eslint-disable-line no-magic-numbers
+const ONE_DAY_MS = 24 * 60 * MINUTES; // eslint-disable-line no-magic-numbers
 const ONE_HOUR_MS = ONE_DAY_MS / 24; // eslint-disable-line no-magic-numbers
+
+function addRandomMinutes(number) {
+  const variance = Math.floor(Math.random() * 30 * MINUTES); // eslint-disable-line no-magic-numbers
+  return number + variance;
+}
 
 let companyIdPromise = null;
 let storageIsAuthorized = null;
@@ -33,11 +39,11 @@ function updateStorageAuth() {
   .then(isActive=>{
     storageIsAuthorized = isActive;
     sendLicensingUpdate();
-    setTimeout(()=>module.exports.updateStorageAuth(), ONE_DAY_MS);
+    setTimeout(()=>module.exports.updateStorageAuth(), addRandomMinutes(ONE_DAY_MS));
   })
   .catch(err=>{
     logger.error('licensing - error on updating storage authorization', err);
-    setTimeout(()=>module.exports.updateStorageAuth(), ONE_HOUR_MS);
+    setTimeout(()=>module.exports.updateStorageAuth(), addRandomMinutes(ONE_HOUR_MS));
   })
 }
 
