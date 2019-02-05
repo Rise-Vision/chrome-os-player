@@ -60,7 +60,7 @@ function sendResponse(socketId, httpStatus = '', content = '') {
   const responseBuffer = util.stringToArrayBuffer(headerText + content);
 
   tcp.getInfo(socketId, socketInfo => {
-    if (socketInfo && !socketInfo.connected) {
+    if (chrome.runtime.lastError || (socketInfo && !socketInfo.connected)) { // eslint-disable-line no-extra-parens
       sockets.delete(socketId);
       tcp.close(socketId);
       return;
