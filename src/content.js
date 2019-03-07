@@ -15,6 +15,7 @@ const uptime = require('./uptime/uptime');
 const uptimeRendererHealth = require('./uptime/renderer-health');
 const scheduleParser = require('./scheduling/schedule-parser');
 const noViewerSchedulePlayer = require('./scheduling/schedule-player');
+const contentWatchdog = require('./content-watchdog');
 
 const VIEWER_URL = "http://viewer.risevision.com/Viewer.html";
 
@@ -164,6 +165,9 @@ function init() {
     uptime.init();
     fetchContent();
   });
+
+  const webview = document.querySelector('webview');
+  contentWatchdog.init(webview);
 }
 
 document.addEventListener('DOMContentLoaded', init);

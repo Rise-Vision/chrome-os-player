@@ -17,6 +17,26 @@ function stringToArrayBuffer(string) {
   return encoded.buffer;
 }
 
+function dataUrlToArrayBuffer(dataUrl) {
+  const byteString = atob(dataUrl.split(',')[1]);
+  return stringToArrayBuffer(byteString);
+}
+
+function dataUrlToImageData(dataUrl) {
+  return new Promise(function(resolve) {
+    const canvas = document.createElement('canvas'),
+        context = canvas.getContext('2d'),
+        image = new Image();
+    image.addEventListener('load', function() {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      context.drawImage(image, 0, 0, canvas.width, canvas.height);
+      resolve(context.getImageData(0, 0, canvas.width, canvas.height));
+    }, false);
+    image.src = dataUrl;
+  });
+}
+
 /**
  * Returns a promise that resolves to a string that is the hex value of the SHA-1 hash of the provided string
  * @param {string} string
@@ -90,6 +110,8 @@ function padStart(value) {
 module.exports = {
   arrayBufferToString,
   stringToArrayBuffer,
+  dataUrlToArrayBuffer,
+  dataUrlToImageData,
   sha1,
   fetchWithRetry,
   parseUri,
