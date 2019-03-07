@@ -1,6 +1,7 @@
 const pixelmatch = require('pixelmatch');
 const util = require('./util');
 const logger = require('./logging/logger');
+const whiteScreenAnalyser = require('./white-screen-analyser');
 
 const MINUTES = 60000;
 const whiteScreenCheckInterval = 5 * MINUTES; // eslint-disable-line no-magic-numbers
@@ -44,6 +45,7 @@ function handleWhiteScreen(whiteScreenDetected, schedule = setTimeout, interval 
   if (whiteScreenEvents >= MAX_CONSECUTIVE_EVENTS) {
     whiteScreenEvents = 0;
     logger.log("white screen detected");
+    whiteScreenAnalyser.checkExternalContent();
     clearTimeout(repeatedWhiteScreenTimer);
   } else {
     repeatedWhiteScreenTimer = schedule(checkWhiteScreen, interval);
