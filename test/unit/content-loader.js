@@ -130,4 +130,42 @@ describe('Content Loader', () => {
     });
   });
 
+  it('should not touch presentations that have no layout', () => {
+    const storedData = {
+      displayId: 'displayId',
+      content: {
+        content: {
+          presentations: [
+            {
+                "id": "7b96cf9e-efbf-48b1-8295-371169f88f48",
+                "companyId": "7fa5ee92-7deb-450b-a8d5-e5ed648c575f",
+                "name": "Copy of Financial Literacy - NYSE and NASDAQ",
+                "presentationType": "HTML Template",
+                "changeDate": "25022019165449508",
+                "publish": 0,
+                "isTemplate": false,
+                "revisionStatus": 0
+            },
+            {
+                "id": "794fe005-1c6d-4643-a37a-9e11820e9063",
+                "companyId": "7fa5ee92-7deb-450b-a8d5-e5ed648c575f",
+                "name": "Copy of Financial Literacy - NYSE and NASDAQ",
+                "presentationType": "HTML Template",
+                "changeDate": "25022019165429711",
+                "publish": 0,
+                "isTemplate": false,
+                "revisionStatus": 0
+            }
+          ]
+        }
+      }
+    }
+
+    chrome.storage.local.get.yields(storedData);
+
+    return contentLoader.loadContent().then(() => {
+      sinon.assert.calledWith(chrome.storage.local.remove, 'content');
+    });
+  });
+
 });

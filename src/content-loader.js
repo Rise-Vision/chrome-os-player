@@ -46,7 +46,11 @@ function loadContent() {
     const hasPresentations = contentData && contentData.content && contentData.content.presentations;
 
     if (hasPresentations) {
-      contentData.content.presentations.forEach((presentation) => presentation.layout = presentation.layout.replace(regex, rewriteUrl));
+      contentData.content.presentations.forEach(presentation => {
+        if (presentation.layout) {
+          presentation.layout = presentation.layout.replace(regex, rewriteUrl);
+        }
+      });
     }
 
     return contentData;
