@@ -32,7 +32,7 @@ function setUpMessaging() {
     });
   });
 
-  setupWebviewEvents(webview);
+  setUpWebviewEvents(webview);
 
   messaging.on('content-update', fetchContent);
   messaging.on('reboot-request', () => rebootScheduler.rebootNow());
@@ -43,8 +43,8 @@ function setUpMessaging() {
   .catch(() => logger.log('MS connection failed on init'));
 }
 
-function setupWebviewEvents(webview) {
-  setupResponsivenessEvents(webview);
+function setUpWebviewEvents(webview) {
+  setUpResponsivenessEvents(webview);
   webview.addEventListener('loadabort', evt => logger.error('player - viewer webview load aborted', null, {code: evt.code, reason: evt.reason}));
   webview.addEventListener('permissionrequest', evt => {
     logger.log('viewer webview premission requested', evt.permission);
@@ -56,7 +56,7 @@ function setupWebviewEvents(webview) {
   });
 }
 
-function setupResponsivenessEvents(webview) {
+function setUpResponsivenessEvents(webview) {
   let responsiveTimer = null;
   const sixMinutes = 6 * 60 * 1000; // eslint-disable-line
 
@@ -73,7 +73,7 @@ function setupResponsivenessEvents(webview) {
   });
 }
 
-function setupClientInfoLog() {
+function setUpClientInfoLog() {
   viewerMessaging.removeAllListeners('viewer-config');
   viewerMessaging.on('viewer-config', viewerConfig => {
     logger.log('viewer config received', viewerConfig);
@@ -86,7 +86,7 @@ function setupClientInfoLog() {
   });
 }
 
-function setupClientInfoLogNoViewer() {
+function setUpClientInfoLogNoViewer() {
   licensing.clearAuthorizationStatusListeners();
   licensing.onAuthorizationStatus(isAuthorized => {
     logger.log('authorization status received', isAuthorized);
@@ -136,12 +136,12 @@ function isViewerLoaded() {
 
 function loadContent(contentData) {
   if (scheduleParser.hasOnlyNoViewerURLItems()) {
-    setupClientInfoLogNoViewer();
+    setUpClientInfoLogNoViewer();
     return Promise.resolve(noViewerSchedulePlayer.start());
   }
 
   if (!isViewerLoaded()) {
-    setupClientInfoLog();
+    setUpClientInfoLog();
     loadViewerUrl();
   }
 
