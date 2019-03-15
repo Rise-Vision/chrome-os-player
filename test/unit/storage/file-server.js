@@ -109,7 +109,7 @@ describe('File Server', () => {
 
         param1=value1&param2=value2`;
 
-      const responseText = 'HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\nContent-Length: 0\r\n\r\n';
+      const responseText = 'HTTP/1.1 400 Bad Request\r\nContent-Type: text/plain\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET\r\nContent-Length: 0\r\n\r\n';
 
       const acceptInfo = {socketId: 1, clientSocketId: 1};
 
@@ -140,7 +140,7 @@ describe('File Server', () => {
       const acceptInfo = {socketId: 1, clientSocketId: 1};
       const receiveInfo = {data: requestText, socketId: 1};
 
-      const responseText = 'HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\nContent-Length: 0\r\n\r\n';
+      const responseText = 'HTTP/1.1 404 Not Found\r\nContent-Type: text/plain\r\nAccess-Control-Allow-Origin: *\r\nAccess-Control-Allow-Methods: GET\r\nContent-Length: 0\r\n\r\n';
 
       return fileServer.init().then(() => {
         chrome.sockets.tcpServer.onAccept.dispatch(acceptInfo);
