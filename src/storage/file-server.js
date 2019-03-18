@@ -148,7 +148,9 @@ function createResponseHeader(httpStatus, keepAlive, file) {
   const contentType = (file && file.type) || 'text/plain'; // eslint-disable-line no-extra-parens
   const lines = [
     `HTTP/1.1 ${httpStatus}`,
-    `Content-Type: ${contentType}`
+    `Content-Type: ${contentType}`,
+    'Access-Control-Allow-Origin: *',
+    'Access-Control-Allow-Methods: GET'
   ];
 
   if (keepAlive) {
