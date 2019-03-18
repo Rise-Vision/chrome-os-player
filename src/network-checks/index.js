@@ -4,10 +4,11 @@ const TIMEOUT_ERROR = Error('network-check-timeout');
 const siteList = [
   "http://viewer.risevision.com",
   "http://widgets.risevision.com/widget-image/0.1.1/dist/widget.html",
+  "http://s3.amazonaws.com/widget-video-rv/1.1.0/dist/widget.html",
   "https://services.risevision.com/healthz",
   "https://storage-dot-rvaserver2.appspot.com",
   "https://store.risevision.com",
-  "https://aws.amazon.com/s3/",
+  "https://s3.amazonaws.com/widget-video-rv/1.1.0/dist/widget.html",
   "https://storage.googleapis.com/install-versions.risevision.com/display-modules-manifest.json",
   "https://www.googleapis.com/storage/v1/b/install-versions.risevision.com/o/installer-win-64.exe?fields=kind"
 ];
