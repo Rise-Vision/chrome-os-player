@@ -45,7 +45,8 @@ function setUpMessaging() {
 
 function setUpWebviewEvents(webview) {
   setUpResponsivenessEvents(webview);
-  webview.addEventListener('loadabort', evt => logger.error('player - viewer webview load aborted', null, {code: evt.code, reason: evt.reason}));
+  setUpContentLoadEvents(webview);
+
   webview.addEventListener('permissionrequest', evt => {
     logger.log('viewer webview premission requested', evt.permission);
     if (evt.permission === 'geolocation' || evt.permission === 'loadplugin') {
@@ -70,6 +71,22 @@ function setUpResponsivenessEvents(webview) {
   uptimeRendererHealth.onMultipleFailures(() => {
     logger.log('player - multiple renderer failures');
     rebootScheduler.rebootNow();
+  });
+}
+
+function setUpContentLoadEvents(webview) {
+  const timeout = 60 * 1000; // eslint-disable-line no-magic-numbers
+  let tries = 1;
+  let timer = null;
+  webview.addEventListener('loadabort', evt => {
+    logger.error('player - viewer webview load aborted', null, {code: evt.code, reason: evt.reason});
+    clearTimeout(timer);
+    tries += 1;
+    timer = setTimeout(() => webview.reload(), tries * timeout);
+  });
+  webview.addEventListener('contentload', () => {
+    clearTimeout(timer);
+    logger.log(`player - webview content loaded`, {url: webview.src});
   });
 }
 
