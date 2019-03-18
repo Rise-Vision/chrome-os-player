@@ -32,7 +32,7 @@ function setUpMessaging() {
     });
   });
 
-  setupWebviewEvents(webview);
+  setUpWebviewEvents(webview);
 
   messaging.on('content-update', fetchContent);
   messaging.on('reboot-request', () => rebootScheduler.rebootNow());
@@ -43,9 +43,10 @@ function setUpMessaging() {
   .catch(() => logger.log('MS connection failed on init'));
 }
 
-function setupWebviewEvents(webview) {
-  setupResponsivenessEvents(webview);
-  webview.addEventListener('loadabort', evt => logger.error('player - viewer webview load aborted', null, {code: evt.code, reason: evt.reason}));
+function setUpWebviewEvents(webview) {
+  setUpResponsivenessEvents(webview);
+  setUpContentLoadEvents(webview);
+
   webview.addEventListener('permissionrequest', evt => {
     logger.log('viewer webview premission requested', evt.permission);
     if (evt.permission === 'geolocation' || evt.permission === 'loadplugin') {
@@ -56,7 +57,7 @@ function setupWebviewEvents(webview) {
   });
 }
 
-function setupResponsivenessEvents(webview) {
+function setUpResponsivenessEvents(webview) {
   let responsiveTimer = null;
   const sixMinutes = 6 * 60 * 1000; // eslint-disable-line
 
@@ -73,7 +74,23 @@ function setupResponsivenessEvents(webview) {
   });
 }
 
-function setupClientInfoLog() {
+function setUpContentLoadEvents(webview) {
+  const timeout = 60 * 1000; // eslint-disable-line no-magic-numbers
+  let tries = 1;
+  let timer = null;
+  webview.addEventListener('loadabort', evt => {
+    logger.error('player - viewer webview load aborted', null, {code: evt.code, reason: evt.reason});
+    clearTimeout(timer);
+    tries += 1;
+    timer = setTimeout(() => webview.reload(), tries * timeout);
+  });
+  webview.addEventListener('contentload', () => {
+    clearTimeout(timer);
+    logger.log(`player - webview content loaded`, {url: webview.src});
+  });
+}
+
+function setUpClientInfoLog() {
   viewerMessaging.removeAllListeners('viewer-config');
   viewerMessaging.on('viewer-config', viewerConfig => {
     logger.log('viewer config received', viewerConfig);
@@ -86,7 +103,7 @@ function setupClientInfoLog() {
   });
 }
 
-function setupClientInfoLogNoViewer() {
+function setUpClientInfoLogNoViewer() {
   licensing.clearAuthorizationStatusListeners();
   licensing.onAuthorizationStatus(isAuthorized => {
     logger.log('authorization status received', isAuthorized);
@@ -136,12 +153,12 @@ function isViewerLoaded() {
 
 function loadContent(contentData) {
   if (scheduleParser.hasOnlyNoViewerURLItems()) {
-    setupClientInfoLogNoViewer();
+    setUpClientInfoLogNoViewer();
     return Promise.resolve(noViewerSchedulePlayer.start());
   }
 
   if (!isViewerLoaded()) {
-    setupClientInfoLog();
+    setUpClientInfoLog();
     loadViewerUrl();
   }
 
