@@ -88,6 +88,7 @@ function updateProductAuth({topic, status, filePath, ospath} = {}) {
     logger.log(`licensing - authorization set to ${JSON.stringify(subscriptions)}`);
   })
   .then(sendLicensingUpdate)
+  .then(notifyAuthorizationStatusListeners)
   .catch(err=>{
     logger.error('licensing - error on updating product authorization', err);
     console.error(Error(err.message))
@@ -102,9 +103,6 @@ function updateProductAuth({topic, status, filePath, ospath} = {}) {
 
 function sendLicensingUpdate() {
   logger.log('licensing - sending licensing update', subscriptions);
-  if (Object.keys(subscriptions).length === 0) {
-    return;
-  }
 
   const message = {
     from: 'licensing',
@@ -113,8 +111,6 @@ function sendLicensingUpdate() {
   };
 
   viewerMessaging.send(message);
-
-  notifyAuthorizationStatusListeners();
 }
 
 function products() {
