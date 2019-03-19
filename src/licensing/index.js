@@ -15,7 +15,7 @@ const productCodes = {
 
 const subscriptions = {};
 let displayId = null;
-let authorizationListeners = [];
+let authorizationStatusListener = () => {}; // eslint-disable-line func-style
 
 function init() {
   viewerMessaging.on('licensing-request', sendLicensingUpdate);
@@ -32,18 +32,18 @@ function init() {
 }
 
 function onAuthorizationStatus(listener) {
-  authorizationListeners.push(listener);
-}
-
-function clearAuthorizationStatusListeners() {
-  authorizationListeners = [];
+  authorizationStatusListener = listener;
+  notifyAuthorizationStatusListeners();
 }
 
 function notifyAuthorizationStatusListeners() {
-  authorizationListeners.forEach(listener => {
-    const isAuthorized = util.objectValues(subscriptions).some(subscription => subscription === true);
-    listener(isAuthorized);
-  });
+  const values = util.objectValues(subscriptions);
+  if (values.length === 0) {
+    return;
+  }
+
+  const isAuthorized = util.objectValues(subscriptions).some(subscription => subscription === true);
+  authorizationStatusListener(isAuthorized);
 }
 
 function updateDisplayIdAndResubmitWatch(changes, area) {
@@ -102,6 +102,10 @@ function updateProductAuth({topic, status, filePath, ospath} = {}) {
 
 function sendLicensingUpdate() {
   logger.log('licensing - sending licensing update', subscriptions);
+  if (Object.keys(subscriptions).length === 0) {
+    return;
+  }
+
   const message = {
     from: 'licensing',
     topic: 'licensing-update',
@@ -119,7 +123,5 @@ function products() {
 
 module.exports = {
   init,
-  onAuthorizationStatus,
-  clearAuthorizationStatusListeners,
-  notifyAuthorizationStatusListeners
+  onAuthorizationStatus
 };
