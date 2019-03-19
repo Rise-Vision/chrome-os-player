@@ -33,10 +33,10 @@ function init() {
 
 function onAuthorizationStatus(listener) {
   authorizationStatusListener = listener;
-  notifyAuthorizationStatusListeners();
+  notifyAuthorizationStatusListener();
 }
 
-function notifyAuthorizationStatusListeners() {
+function notifyAuthorizationStatusListener() {
   const values = util.objectValues(subscriptions);
   if (values.length === 0) {
     return;
@@ -88,7 +88,7 @@ function updateProductAuth({topic, status, filePath, ospath} = {}) {
     logger.log(`licensing - authorization set to ${JSON.stringify(subscriptions)}`);
   })
   .then(sendLicensingUpdate)
-  .then(notifyAuthorizationStatusListeners)
+  .then(notifyAuthorizationStatusListener)
   .catch(err=>{
     logger.error('licensing - error on updating product authorization', err);
     console.error(Error(err.message))
