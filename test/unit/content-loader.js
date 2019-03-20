@@ -3,6 +3,7 @@ const assert = require('assert');
 const sinon = require('sinon');
 const chrome = require('sinon-chrome/apps');
 const gcsClient = require('../../src/gcs-client');
+const systemInfo = require('../../src/logging/system-info');
 const logger = require('../../src/logging/logger');
 
 const contentLoader = require('../../src/content-loader');
@@ -84,6 +85,51 @@ describe('Content Loader', () => {
       assert.equal(layout.indexOf('http://s3.amazonaws.com/widget-rss/1.0.0/dist/widget.html'), -1);
       assert.equal(layout.indexOf('http://s3.amazonaws.com/widget-time-date/1.0.0/dist/widget.html'), -1);
       assert.equal(layout.indexOf('http://s3.amazonaws.com/widget-web-page/1.0.0/dist/widget.html'), -1);
+    });
+  });
+
+  it('should rewrite HTML Template presentations', () => {
+    chrome.storage.local.get.yields({displayId: 'displayId'});
+    const testObjRef = "test-obj-ref";
+    const testPCode = "test-p-code";
+    const computedTemplateURL = `http://widgets.risevision.com/stable/templates/${testPCode}/src/template.html?presentationId=${testObjRef}`;
+
+    const contentData = {
+      content: {
+        presentations: [
+          {
+            "id": testObjRef,
+            "productCode": testPCode
+          },
+          {
+            "id": "other-obj-ref",
+            "productCode": "other-p-code"
+          }
+        ],
+        schedule: {
+          items: [
+            {
+              "type": "presentation",
+              "presentationType": "HTML Template",
+              "objectReference": testObjRef
+            },
+            {
+              "type": "presentation",
+              "presentationType": "NOT HTML Template",
+              "objectReference": "other-obj-ref"
+            }
+          ]
+        }
+      }
+    };
+    sandbox.stub(gcsClient, 'fetchJson').resolves(contentData);
+    sandbox.stub(systemInfo, 'isBeta').returns(false);
+
+    return contentLoader.loadContent().then((data) => {
+      const items = data.content.schedule.items;
+      assert.equal(items[0].type, "url");
+      assert.equal(items[0].objectReference, computedTemplateURL);
+      assert.equal(items[1].type, "presentation");
     });
   });
 
