@@ -15,7 +15,7 @@ const productCodes = {
 
 const subscriptions = {};
 let displayId = null;
-let authorizationListeners = [];
+let authorizationStatusListener = () => {}; // eslint-disable-line func-style
 
 function init() {
   viewerMessaging.on('licensing-request', sendLicensingUpdate);
@@ -32,18 +32,18 @@ function init() {
 }
 
 function onAuthorizationStatus(listener) {
-  authorizationListeners.push(listener);
+  authorizationStatusListener = listener;
+  notifyAuthorizationStatusListener();
 }
 
-function clearAuthorizationStatusListeners() {
-  authorizationListeners = [];
-}
+function notifyAuthorizationStatusListener() {
+  const values = util.objectValues(subscriptions);
+  if (values.length === 0) {
+    return;
+  }
 
-function notifyAuthorizationStatusListeners() {
-  authorizationListeners.forEach(listener => {
-    const isAuthorized = util.objectValues(subscriptions).some(subscription => subscription === true);
-    listener(isAuthorized);
-  });
+  const isAuthorized = util.objectValues(subscriptions).some(subscription => subscription === true);
+  authorizationStatusListener(isAuthorized);
 }
 
 function updateDisplayIdAndResubmitWatch(changes, area) {
@@ -88,6 +88,7 @@ function updateProductAuth({topic, status, filePath, ospath} = {}) {
     logger.log(`licensing - authorization set to ${JSON.stringify(subscriptions)}`);
   })
   .then(sendLicensingUpdate)
+  .then(notifyAuthorizationStatusListener)
   .catch(err=>{
     logger.error('licensing - error on updating product authorization', err);
     console.error(Error(err.message))
@@ -102,6 +103,7 @@ function updateProductAuth({topic, status, filePath, ospath} = {}) {
 
 function sendLicensingUpdate() {
   logger.log('licensing - sending licensing update', subscriptions);
+
   const message = {
     from: 'licensing',
     topic: 'licensing-update',
@@ -109,8 +111,6 @@ function sendLicensingUpdate() {
   };
 
   viewerMessaging.send(message);
-
-  notifyAuthorizationStatusListeners();
 }
 
 function products() {
@@ -119,7 +119,5 @@ function products() {
 
 module.exports = {
   init,
-  onAuthorizationStatus,
-  clearAuthorizationStatusListeners,
-  notifyAuthorizationStatusListeners
+  onAuthorizationStatus
 };

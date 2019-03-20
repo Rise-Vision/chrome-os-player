@@ -94,22 +94,18 @@ function setUpClientInfoLog() {
   viewerMessaging.removeAllListeners('viewer-config');
   viewerMessaging.on('viewer-config', viewerConfig => {
     logger.log('viewer config received', viewerConfig);
-    licensing.clearAuthorizationStatusListeners();
     licensing.onAuthorizationStatus(isAuthorized => {
       logger.log('authorization status received', isAuthorized);
       logger.logClientInfo(viewerConfig, isAuthorized);
     });
-    licensing.notifyAuthorizationStatusListeners();
   });
 }
 
 function setUpClientInfoLogNoViewer() {
-  licensing.clearAuthorizationStatusListeners();
   licensing.onAuthorizationStatus(isAuthorized => {
     logger.log('authorization status received', isAuthorized);
     logger.logClientInfo({width: window.innerWidth, height: window.innerHeight}, isAuthorized);
   });
-  licensing.notifyAuthorizationStatusListeners();
 }
 
 function fetchContent() {
