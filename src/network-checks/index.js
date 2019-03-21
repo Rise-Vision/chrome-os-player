@@ -1,6 +1,7 @@
 const ONE_SECOND_MILLIS = 1000;
 const TIMEOUT_MILLIS = 60000;
 const TIMEOUT_ERROR = Error('network-check-timeout');
+const NOT_ONLINE_ERROR = Error('network-not-online');
 const siteList = [
   "http://viewer.risevision.com",
   "http://widgets.risevision.com/widget-image/0.1.1/dist/widget.html",
@@ -29,7 +30,7 @@ module.exports = {
       });
     }));
 
-    result = Promise.race([
+    const race = [
       checks,
       new Promise((res, rej)=>{
         setTimeout(()=>rej(TIMEOUT_ERROR), TIMEOUT_MILLIS);
@@ -38,7 +39,9 @@ module.exports = {
           secondsRemaining -= 1
         }, ONE_SECOND_MILLIS);
       })
-    ]);
+    ];
+
+    result = checkOnLineStatus().then(() => Promise.race(race));
 
     result.then(()=>isComplete = true);
 
@@ -58,3 +61,10 @@ module.exports = {
     module.exports.checkSites();
   }
 };
+
+function checkOnLineStatus() {
+  if (!navigator.onLine) {
+    return Promise.reject(NOT_ONLINE_ERROR);
+  }
+  return Promise.resolve();
+}

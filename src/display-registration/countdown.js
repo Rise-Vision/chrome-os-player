@@ -1,6 +1,7 @@
 const windowManager = require('../window-manager');
 const networkChecks = require('../network-checks');
 const launchEnv = require('../launch-environment');
+const rebootScheduler = require('../reboot-scheduler');
 
 function createViewModel(document) { // eslint-disable-line max-statements
 
@@ -40,6 +41,11 @@ function createViewModel(document) { // eslint-disable-line max-statements
       const messageEnd = specificSite ? message.split(" ")[0] : genericError;
 
       networkErrorMessage.innerHTML = `Could not connect to ${messageEnd}.`;
+
+      if (message === 'network-not-online') {
+        networkErrorMessage.innerHTML = 'No internet connection available.';
+      }
+
       showErrorBox();
     },
     bindController(controller) {
@@ -87,7 +93,13 @@ function createController(viewModel) {
     },
 
     continue() {
-      if (skipNetworkError) {return windowManager.launchContent()}
+      if (restartPlayer) {
+        return rebootScheduler.restart();
+      }
+
+      if (skipNetworkError) {
+        return windowManager.launchContent()
+      }
       skipNetworkError = true;
 
       if (!networkChecks.haveCompleted()) {
@@ -100,6 +112,10 @@ function createController(viewModel) {
       .catch(err=>{
         if (err.message === 'network-check-timeout') {
           return windowManager.launchContent();
+        }
+
+        if (err.message === 'network-not-online') {
+          restartPlayer = true;
         }
 
         viewModel.showNetworkError(err.message);
@@ -118,6 +134,7 @@ function createController(viewModel) {
   const SIXTY_SECONDS = 60;
   let runningTimer = startCountdown(TEN_SECONDS);
   let skipNetworkError = false;
+  let restartPlayer = false;
 
   function startCountdown(secs) {
     let seconds = secs;
