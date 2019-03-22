@@ -1,7 +1,6 @@
 const windowManager = require('../window-manager');
 const networkChecks = require('../network-checks');
 const launchEnv = require('../launch-environment');
-const rebootScheduler = require('../reboot-scheduler');
 
 function createViewModel(document) { // eslint-disable-line max-statements
 
@@ -13,6 +12,7 @@ function createViewModel(document) { // eslint-disable-line max-statements
   const continueButton = document.getElementById('continue');
   const cancelButton = document.getElementById('cancel');
   const links = document.querySelectorAll('a.webview');
+  const main = document.querySelector('main');
 
   function setupInfoMessage() {
     const nonKioskDisclaimer = document.getElementById('nonKioskDisclaimer');
@@ -34,18 +34,16 @@ function createViewModel(document) { // eslint-disable-line max-statements
       networkErrorMessage.innerHTML = 'Waiting for network checks';
       showErrorBox();
     },
-
+    showWaitingForOnLineStatus() {
+      const onLineWaitingHtml = require('./online-waiting.html'); // eslint-disable-line global-require
+      main.innerHTML = onLineWaitingHtml;
+    },
     showNetworkError(message) {
       const specificSite = message.startsWith("http");
       const genericError = 'required network sites';
       const messageEnd = specificSite ? message.split(" ")[0] : genericError;
 
       networkErrorMessage.innerHTML = `Could not connect to ${messageEnd}.`;
-
-      if (message === 'network-not-online') {
-        networkErrorMessage.innerHTML = 'No internet connection available.';
-      }
-
       showErrorBox();
     },
     bindController(controller) {
@@ -93,13 +91,7 @@ function createController(viewModel) {
     },
 
     continue() {
-      if (restartPlayer) {
-        return rebootScheduler.restart();
-      }
-
-      if (skipNetworkError) {
-        return windowManager.launchContent()
-      }
+      if (skipNetworkError) {return windowManager.launchContent()}
       skipNetworkError = true;
 
       if (!networkChecks.haveCompleted()) {
@@ -115,7 +107,9 @@ function createController(viewModel) {
         }
 
         if (err.message === 'network-not-online') {
-          restartPlayer = true;
+          clearInterval(runningTimer);
+          viewModel.showWaitingForOnLineStatus();
+          return networkChecks.waitForOnLineStatus().then(() => windowManager.launchContent());
         }
 
         viewModel.showNetworkError(err.message);
@@ -134,7 +128,6 @@ function createController(viewModel) {
   const SIXTY_SECONDS = 60;
   let runningTimer = startCountdown(TEN_SECONDS);
   let skipNetworkError = false;
-  let restartPlayer = false;
 
   function startCountdown(secs) {
     let seconds = secs;

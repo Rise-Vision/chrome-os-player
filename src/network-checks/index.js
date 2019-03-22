@@ -59,6 +59,13 @@ module.exports = {
   retry() {
     isComplete = false;
     module.exports.checkSites();
+  },
+  waitForOnLineStatus() {
+    if (navigator.onLine) {
+      return Promise.resolve();
+    }
+
+    return new Promise(res => window.addEventListener('online', res));
   }
 };
 
