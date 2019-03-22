@@ -79,7 +79,10 @@ function setUpContentLoadEvents(webview) {
   let tries = 1;
   let timer = null;
   webview.addEventListener('loadabort', evt => {
-    logger.error('player - viewer webview load aborted', null, {code: evt.code, reason: evt.reason});
+    logger.error('player - viewer webview load aborted', null, {url: evt.url, isTopLevel: evt.isTopLevel, code: evt.code, reason: evt.reason});
+    if (!evt.isTopLevel) {
+      return;
+    }
     clearTimeout(timer);
     tries += 1;
     timer = setTimeout(() => webview.reload(), tries * timeout);
