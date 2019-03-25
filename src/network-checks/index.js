@@ -64,8 +64,8 @@ module.exports = {
     if (navigator.onLine) {
       return Promise.resolve();
     }
-
-    return new Promise(res => window.addEventListener('online', res));
+    const delay = 5 * ONE_SECOND_MILLIS; // eslint-disable-line no-magic-numbers
+    return new Promise(res => window.addEventListener('online', res)).then(() => new Promise(res => setTimeout(res, delay)));
   }
 };
 
