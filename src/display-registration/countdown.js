@@ -12,6 +12,7 @@ function createViewModel(document) { // eslint-disable-line max-statements
   const continueButton = document.getElementById('continue');
   const cancelButton = document.getElementById('cancel');
   const links = document.querySelectorAll('a.webview');
+  const main = document.querySelector('main');
 
   function setupInfoMessage() {
     const nonKioskDisclaimer = document.getElementById('nonKioskDisclaimer');
@@ -33,7 +34,10 @@ function createViewModel(document) { // eslint-disable-line max-statements
       networkErrorMessage.innerHTML = 'Waiting for network checks';
       showErrorBox();
     },
-
+    showWaitingForOnLineStatus() {
+      const onLineWaitingHtml = require('./online-waiting.html'); // eslint-disable-line global-require
+      main.innerHTML = onLineWaitingHtml;
+    },
     showNetworkError(message) {
       const specificSite = message.startsWith("http");
       const genericError = 'required network sites';
@@ -100,6 +104,12 @@ function createController(viewModel) {
       .catch(err=>{
         if (err.message === 'network-check-timeout') {
           return windowManager.launchContent();
+        }
+
+        if (err.message === 'network-not-online') {
+          clearInterval(runningTimer);
+          viewModel.showWaitingForOnLineStatus();
+          return networkChecks.waitForOnLineStatus().then(() => windowManager.launchContent());
         }
 
         viewModel.showNetworkError(err.message);

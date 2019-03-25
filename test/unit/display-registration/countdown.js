@@ -14,7 +14,8 @@ describe('Countdown Screen', () => {
   const viewModel = {
     bindController() {},
     updateSecondsRemaining() {},
-    showNetworkError() {}
+    showNetworkError() {},
+    showWaitingForOnLineStatus() {}
   }
 
   after(() => chrome.flush());
@@ -99,6 +100,41 @@ describe('Countdown Screen', () => {
     controller.cancel();
 
     sinon.assert.called(windowManager.closeCurrentWindow);
+  });
+
+  it('waits for internet connection', () => {
+    sandbox.stub(networkChecks, 'getResult').rejects(Error('network-not-online'));
+    sandbox.stub(networkChecks, 'haveCompleted').returns(true);
+    sandbox.spy(viewModel, 'updateSecondsRemaining');
+    sandbox.spy(viewModel, 'showWaitingForOnLineStatus');
+    const clock = sandbox.useFakeTimers();
+
+    screen.createController(viewModel);
+
+    return Promise.resolve(clock.runAll())
+    .then(()=>new Promise(res=>process.nextTick(()=>{clock.runAll(); res()})))
+    .then(()=>{
+      sinon.assert.called(viewModel.showWaitingForOnLineStatus);
+    });
+  });
+
+  it('launches content after connecting', () => {
+    sandbox.stub(windowManager, 'launchContent').resolves();
+    sandbox.stub(networkChecks, 'getResult').rejects(Error('network-not-online'));
+    sandbox.stub(networkChecks, 'haveCompleted').returns(true);
+    sandbox.stub(networkChecks, 'waitForOnLineStatus').resolves();
+    sandbox.spy(viewModel, 'updateSecondsRemaining');
+    sandbox.spy(viewModel, 'showWaitingForOnLineStatus');
+    const clock = sandbox.useFakeTimers();
+
+    screen.createController(viewModel);
+
+    return Promise.resolve(clock.runAll())
+    .then(()=>new Promise(res=>process.nextTick(()=>{clock.runAll(); res()})))
+    .then(()=>{
+      sinon.assert.called(viewModel.showWaitingForOnLineStatus);
+      sinon.assert.called(windowManager.launchContent);
+    });
   });
 
 });
