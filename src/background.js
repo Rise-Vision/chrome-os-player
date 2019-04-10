@@ -29,3 +29,6 @@ chrome.runtime.onRestartRequired.addListener(() => {
 
 chrome.runtime.onInstalled.addListener(details => logger.log('app has been installed', details));
 chrome.runtime.onSuspend.addListener(() => logger.log('app has been suspended'));
+
+window.addEventListener('online', () => logger.log('online event triggered'));
+window.addEventListener('offline', () => logger.log('offline event triggered'));

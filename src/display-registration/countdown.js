@@ -1,6 +1,7 @@
 const windowManager = require('../window-manager');
 const networkChecks = require('../network-checks');
 const launchEnv = require('../launch-environment');
+const logger = require('../logging/logger');
 
 function createViewModel(document) { // eslint-disable-line max-statements
 
@@ -35,6 +36,7 @@ function createViewModel(document) { // eslint-disable-line max-statements
       showErrorBox();
     },
     showWaitingForOnLineStatus() {
+      logger.log('showing waiting for online');
       const onLineWaitingHtml = require('./online-waiting.html'); // eslint-disable-line global-require
       main.innerHTML = onLineWaitingHtml;
     },

@@ -8,6 +8,12 @@ const sandbox = sinon.createSandbox();
 
 describe('background script', () => {
 
+  before(() => {
+    global.window = {addEventListener() {}};
+  });
+
+  after(() => Reflect.deleteProperty(global, 'window'));
+
   beforeEach(() => {
     sandbox.stub(logger, 'log');
     sandbox.stub(launchEnvs, 'set');
