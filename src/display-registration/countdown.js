@@ -111,7 +111,7 @@ function createController(viewModel) {
         if (err.message === 'network-not-online') {
           clearInterval(runningTimer);
           viewModel.showWaitingForOnLineStatus();
-          return networkChecks.waitForOnLineStatus().then(() => windowManager.launchContent());
+          return networkChecks.waitForViewer().then(() => windowManager.launchContent());
         }
 
         viewModel.showNetworkError(err.message);

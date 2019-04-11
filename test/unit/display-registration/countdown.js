@@ -122,7 +122,7 @@ describe('Countdown Screen', () => {
     sandbox.stub(windowManager, 'launchContent').resolves();
     sandbox.stub(networkChecks, 'getResult').rejects(Error('network-not-online'));
     sandbox.stub(networkChecks, 'haveCompleted').returns(true);
-    sandbox.stub(networkChecks, 'waitForOnLineStatus').resolves();
+    sandbox.stub(networkChecks, 'waitForViewer').resolves();
     sandbox.spy(viewModel, 'updateSecondsRemaining');
     sandbox.spy(viewModel, 'showWaitingForOnLineStatus');
     const clock = sandbox.useFakeTimers();
