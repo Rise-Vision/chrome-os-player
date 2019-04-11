@@ -60,12 +60,13 @@ module.exports = {
     isComplete = false;
     module.exports.checkSites();
   },
-  waitForOnLineStatus() {
-    if (navigator.onLine) {
-      return Promise.resolve();
-    }
-    const delay = 5 * ONE_SECOND_MILLIS; // eslint-disable-line no-magic-numbers
-    return new Promise(res => window.addEventListener('online', res)).then(() => new Promise(res => setTimeout(res, delay)));
+  waitForViewer(attempt = 0, timeout = 1000) { // eslint-disable-line no-magic-numbers
+    return fetch("http://viewer.risevision.com")
+    .then(resp => resp.ok ? resp : Promise.reject(Error(`${resp.statusText}`)))
+    .catch(() => {
+      return new Promise((resolve) => setTimeout(resolve, timeout))
+      .then(() => module.exports.waitForViewer(attempt + 1, timeout * attempt));
+    });
   }
 };
 
