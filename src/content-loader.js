@@ -1,7 +1,8 @@
 const gcsClient = require('./gcs-client');
 const updateFrequencyLogger = require('./update-frequency-logger');
 const logger = require('./logging/logger');
-const systemInfo = require('./logging/system-info');
+const htmlTemplateURLParser = require('./html-template-url-parser');
+
 
 function readDisplayId() {
   return new Promise((resolve) => chrome.storage.local.get(items => resolve(items.displayId)));
@@ -55,30 +56,10 @@ function loadContent() {
       });
     }
 
-    if (hasScheduleItems && hasPresentations) {
-      const HTMLTemplateURL = "http://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID";
-      const isBeta = systemInfo.isBeta();
-
-      contentData.content.schedule.items
-      .filter(item=>item.presentationType === "HTML Template")
-      .forEach(item=>{
-        item.type = "url";
-        item.objectReference = HTMLTemplateURL
-          .replace("STAGE", isBeta ? "beta" : "stable")
-          .replace("PCODE", getPCode(item.objectReference, contentData))
-          .replace("PID", item.objectReference);
-      });
-    }
-
-    return contentData;
+    return hasScheduleItems && hasPresentations ?
+      htmlTemplateURLParser.restructureHTMLTemplatesToURLItems(contentData) :
+      contentData;
   });
-
-  function getPCode(objectReference, contentData) {
-    const referencedPresentation = contentData.content.presentations
-      .filter(pres=>pres.id === objectReference);
-
-    return referencedPresentation[0] && referencedPresentation[0].productCode;
-  }
 }
 
 module.exports = {

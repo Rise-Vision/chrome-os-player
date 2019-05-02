@@ -4,6 +4,7 @@ const logger = require("../../../src/logging/logger");
 
 const schedulePlayer = require("../../../src/scheduling/schedule-player");
 const scheduleParser = require("../../../src/scheduling/schedule-parser");
+const systemInfo = require('../../../src/logging/system-info');
 
 const sandbox = sinon.createSandbox();
 
@@ -14,6 +15,7 @@ describe("Schedule Player", ()=>{
 
   beforeEach(()=>{
     sandbox.stub(logger, "log");
+    sandbox.stub(systemInfo, "isBeta").returns(false);
     sandbox.stub(global, "setTimeout");
     schedulePlayer.setPlayUrlHandler(url=>played.push(url));
     played.length = 0;
