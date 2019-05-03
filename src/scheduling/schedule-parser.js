@@ -28,6 +28,8 @@ module.exports = {
     const noViewerURLs = /(http(s)?:\/\/)?storage\.googleapis\.com\/risemedialibrary.+|(http(s)?:\/\/)?widgets\.risevision\.com\/.+/;
 
     return data.content.schedule.items.every(item=>{
+      if (item.presentationType === "HTML Template") {return true;}
+
       if (item.type !== "url") {return false;}
       if (!item.objectReference) {return false;}
       if (typeof item.objectReference !== "string") {return false;}
