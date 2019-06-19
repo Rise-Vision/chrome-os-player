@@ -1,6 +1,6 @@
-const viewerMessaging = require('./messaging/viewer-messaging');
-const logger = require('./logging/logger');
-const uptime = require('./uptime/uptime');
+const viewerMessaging = require('../messaging/viewer-messaging');
+const logger = require('../logging/logger');
+const uptime = require('./uptime');
 
 const uptimeInterval = 60000;
 
@@ -9,7 +9,7 @@ function handleUptimeResponse(response) {
 }
 
 function init() {
-  viewerMessaging.on('CONTENT-UPTIME-RESULT', handleUptimeResponse);
+  viewerMessaging.on('content-uptime-result', handleUptimeResponse);
 
   setInterval(retrieveUptime, uptimeInterval);
 }
@@ -17,7 +17,7 @@ function init() {
 function retrieveUptime() {
   if (uptime.isActive()) {
     const schedule = {}
-    const msMessage = {topic: "CONTENT-UPTIME", schedule};
+    const msMessage = {topic: "content-uptime", schedule};
     viewerMessaging.send(msMessage);
   }
 }
