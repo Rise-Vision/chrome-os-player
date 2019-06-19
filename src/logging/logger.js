@@ -69,6 +69,25 @@ function logUptime(connected, showing, scheduled, nowDate = new Date()) {
     .catch(err => error('error when logging uptime', err));
 }
 
+function logTemplateUptime(presentationId, templateProductCode, templateVersion, responding, errorValue, nowDate = new Date()) { // eslint-disable-line max-params
+  if (environment.isDevelopmentVersion()) {return Promise.resolve();}
+
+  return systemInfo.getId()
+    .then(id => {
+      const data = {
+        display_id: id,
+        presentation_id: presentationId,
+        template_product_code: templateProductCode,
+        template_version: templateVersion,
+        responding,
+        error: errorValue,
+        ts: nowDate.toISOString()
+      };
+      return bq.insert(data, 'Template_Uptime_Events', 'events', nowDate);
+    })
+    .catch(err => error('error when logging Template uptime', err));
+}
+
 /**
  * @param {string} event
  * @param {object} [details]
@@ -118,5 +137,6 @@ module.exports = {
   log,
   logClientInfo,
   logUptime,
+  logTemplateUptime,
   error
 }
