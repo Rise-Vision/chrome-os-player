@@ -208,7 +208,7 @@ describe('Logger', () => {
       });
   });
 
-  it('should log template to big query', () => {
+  it('should log template uptime to big query', () => {
     const nowDate = new Date();
     const presentationId = 'presentationId';
     const templateProductCode = 'templateProductCode';
@@ -219,6 +219,22 @@ describe('Logger', () => {
     return logger.logTemplateUptime(presentationId, templateProductCode, templateVersion, responding, error, nowDate)
       .then(() => {
         sinon.assert.calledWith(bq.insert, {display_id: 'displayId', presentation_id: presentationId, template_product_code: templateProductCode, template_version: templateVersion, responding, error, ts: nowDate.toISOString()}, 'Template_Uptime_Events', 'events');
+      });
+  });
+
+  it('should log component uptime to big query', () => {
+    const nowDate = new Date();
+    const presentationId = 'presentationId';
+    const templateProductCode = 'templateProductCode';
+    const templateVersion = 'templateVersion';
+    const componentType = 'componentType';
+    const componentId = 'componentId';
+    const responding = true;
+    const error = false;
+
+    return logger.logComponentUptime(presentationId, templateProductCode, templateVersion, componentType, componentId, responding, error, nowDate)
+      .then(() => {
+        sinon.assert.calledWith(bq.insert, {display_id: 'displayId', presentation_id: presentationId, template_product_code: templateProductCode, template_version: templateVersion, component_type: componentType, component_id: componentId, responding, error, ts: nowDate.toISOString()}, 'Component_Uptime_Events', 'events');
       });
   });
 
