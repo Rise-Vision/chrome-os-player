@@ -34,7 +34,7 @@ function calculate() {
     logger.logUptime(connectedToMS, rendererResult, shouldBePlaying);
     if (!connectedToMS) {networkInvestigation.reportConnectivity();}
 
-    _isActive = connectedToMS && rendererResult && shouldBePlaying && connectedToMS;
+    _isActive = connectedToMS && rendererResult && shouldBePlaying;
   })
   .catch(err => logger.error('uptime - error', err));
 }

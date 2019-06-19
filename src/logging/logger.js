@@ -70,6 +70,8 @@ function logUptime(connected, showing, scheduled, nowDate = new Date()) {
 }
 
 function logTemplateUptime(presentationId, templateProductCode, templateVersion, responding, errorValue, nowDate = new Date()) { // eslint-disable-line max-params
+  console.log('template uptime', presentationId, templateProductCode, templateVersion, responding, errorValue, nowDate);
+
   if (environment.isDevelopmentVersion()) {return Promise.resolve();}
 
   return systemInfo.getId()
@@ -89,6 +91,8 @@ function logTemplateUptime(presentationId, templateProductCode, templateVersion,
 }
 
 function logComponentUptime(presentationId, templateProductCode, templateVersion, componentType, componentId, responding, errorValue, nowDate = new Date()) { // eslint-disable-line max-params
+  console.log('component uptime', presentationId, templateProductCode, templateVersion, componentType, componentId, responding, errorValue, nowDate);
+
   if (environment.isDevelopmentVersion()) {return Promise.resolve();}
 
   return systemInfo.getId()
