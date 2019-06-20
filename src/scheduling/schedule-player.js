@@ -32,7 +32,8 @@ module.exports = {
     Object.values(timers).forEach(clearTimeout);
     playingItem = null;
   },
-  now() {return new Date();}
+  now() {return new Date();},
+  getPlayingItem() {return playingItem;}
 };
 
 function considerFutureScheduledItems(now) {

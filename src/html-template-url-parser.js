@@ -14,10 +14,13 @@ module.exports = {
     .filter(item=>item.presentationType === "HTML Template")
     .forEach(item=>{
       item.type = "url";
+      item.presentationId = item.objectReference;
+      item.productCode = getPCode(item.objectReference, contentData);
+      item.version = isBeta ? "beta" : "stable";
       item.objectReference = HTMLTemplateURL
-        .replace("STAGE", isBeta ? "beta" : "stable")
-        .replace("PCODE", getPCode(item.objectReference, contentData))
-        .replace("PID", item.objectReference);
+        .replace("STAGE", item.version)
+        .replace("PCODE", item.productCode)
+        .replace("PID", item.presentationId);
     });
 
     return restructuredData;
