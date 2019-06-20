@@ -69,46 +69,28 @@ function logUptime(connected, showing, scheduled, nowDate = new Date()) {
     .catch(err => error('error when logging uptime', err));
 }
 
-function logTemplateUptime(presentationId, templateProductCode, templateVersion, responding, errorValue, nowDate = new Date()) { // eslint-disable-line max-params
-  console.log('template uptime', presentationId, templateProductCode, templateVersion, responding, errorValue, nowDate);
-
+function logTemplateUptime(result, nowDate = new Date()) {
+  console.log('template uptime', result, nowDate);
   if (environment.isDevelopmentVersion()) {return Promise.resolve();}
 
   return systemInfo.getId()
     .then(id => {
-      const data = {
-        display_id: id,
-        presentation_id: presentationId,
-        template_product_code: templateProductCode,
-        template_version: templateVersion,
-        responding,
-        error: errorValue,
-        ts: nowDate.toISOString()
-      };
-      return bq.insert(data, 'Template_Uptime_Events', 'events', nowDate);
+      result.display_id = id;
+      result.ts = nowDate.toISOString();
+      return bq.insert(result, 'Template_Uptime_Events', 'events', nowDate);
     })
     .catch(err => error('error when logging Template uptime', err));
 }
 
-function logComponentUptime(presentationId, templateProductCode, templateVersion, componentType, componentId, responding, errorValue, nowDate = new Date()) { // eslint-disable-line max-params
-  console.log('component uptime', presentationId, templateProductCode, templateVersion, componentType, componentId, responding, errorValue, nowDate);
-
+function logComponentUptime(result, nowDate = new Date()) {
+  console.log('component uptime', result, nowDate);
   if (environment.isDevelopmentVersion()) {return Promise.resolve();}
 
   return systemInfo.getId()
     .then(id => {
-      const data = {
-        display_id: id,
-        presentation_id: presentationId,
-        template_product_code: templateProductCode,
-        template_version: templateVersion,
-        component_type: componentType,
-        component_id: componentId,
-        responding,
-        error: errorValue,
-        ts: nowDate.toISOString()
-      };
-      return bq.insert(data, 'Component_Uptime_Events', 'events', nowDate);
+      result.display_id = id;
+      result.ts = nowDate.toISOString();
+      return bq.insert(result, 'Component_Uptime_Events', 'events', nowDate);
     })
     .catch(err => error('error when logging Component uptime', err));
 }

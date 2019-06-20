@@ -9,14 +9,29 @@ let expectedTemplate = null;
 
 function handleUptimeResponse(response) {
   logger.log('uptime - result', JSON.stringify(response));
+  if (!response || !response.template || !response.components) {
+    logger.log('uptime - invalid result', JSON.stringify(response));
+    return;
+  }
+
   clearTimeout(responseTimeoutId);
-  logger.logTemplateUptime(response.presentationId, response.templateProductCode, response.templateVersion, true, response.errorValue);
+
+  const result = response.template;
+  result.responding = true;
+  logger.logTemplateUptime(result);
+
+  response.components.forEach(entry=>logger.logComponentUptime(entry));
 }
 
 function handleNoResponse() {
   logger.log('uptime - no response');
   if (expectedTemplate) {
-    logger.logTemplateUptime(expectedTemplate.presentationId, expectedTemplate.productCode, expectedTemplate.version, false, null);
+    logger.logTemplateUptime({
+      presentation_id: expectedTemplate.presentationId,
+      template_product_code: expectedTemplate.templateProductCode,
+      template_version: expectedTemplate.templateVersion,
+      responding: false
+    });
   }
 }
 
