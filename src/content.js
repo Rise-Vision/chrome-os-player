@@ -154,14 +154,12 @@ function isViewerLoaded() {
 function loadContent(contentData) {
   if (scheduleParser.hasOnlyNoViewerURLItems()) {
     setUpClientInfoLogNoViewer();
-    contentUptime.setViewerBased(false);
     return Promise.resolve(noViewerSchedulePlayer.start());
   }
 
   if (!isViewerLoaded()) {
     setUpClientInfoLog();
     loadViewerUrl();
-    contentUptime.setViewerBased(true);
   }
 
   return viewerMessaging.viewerCanReceiveContent()
@@ -174,6 +172,7 @@ function loadContent(contentData) {
 function init() {
   noViewerSchedulePlayer.setPlayUrlHandler(loadUrl);
   noViewerSchedulePlayer.listenForNothingPlaying(() => loadUrl(chrome.runtime.getURL('black-screen.html')));
+  noViewerSchedulePlayer.listenForPlayingItem(contentUptime.handlePlayingItem);
 
   launchEnv.init()
   .then(() => {

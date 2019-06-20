@@ -7,6 +7,7 @@
   },
   "scripts": {
     "lint": "eslint test && eslint src",
+    "pretty": "eslint test --fix && eslint src --fix",
     "prebuild": "npm run lint",
     "build": "webpack",
     "pretest": "npm run lint",
