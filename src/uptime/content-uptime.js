@@ -5,16 +5,19 @@ const uptime = require('./uptime');
 const uptimeInterval = 10000;
 const responseTimeout = 3000;
 let responseTimeoutId = null;
+let playingItem = null;
 let expectedTemplate = null;
 
 function handleUptimeResponse(response) {
   logger.log('uptime - result', JSON.stringify(response));
-  if (!response || !response.template || !response.components) {
+
+  if (!expectedTemplate || !isValidResponse(response)) {
     logger.log('uptime - invalid result', JSON.stringify(response));
     return;
   }
 
   clearTimeout(responseTimeoutId);
+  expectedTemplate = null;
 
   const result = response.template;
   result.responding = true;
@@ -23,15 +26,21 @@ function handleUptimeResponse(response) {
   response.components.forEach(entry=>logger.logComponentUptime(entry));
 }
 
+function isValidResponse(response) {
+  return response && response.template && response.components &&
+    response.template.presentation_id === expectedTemplate.presentationId;
+}
+
 function handleNoResponse() {
-  logger.log('uptime - no response');
+  logger.log('uptime - no response', expectedTemplate);
   if (expectedTemplate) {
     logger.logTemplateUptime({
       presentation_id: expectedTemplate.presentationId,
-      template_product_code: expectedTemplate.templateProductCode,
-      template_version: expectedTemplate.templateVersion,
+      template_product_code: expectedTemplate.productCode,
+      template_version: expectedTemplate.version,
       responding: false
     });
+    expectedTemplate = null;
   }
 }
 
@@ -43,8 +52,9 @@ function init() {
 }
 
 function retrieveUptime() {
-  if (expectedTemplate && expectedTemplate.presentationType === 'HTML Template' && uptime.isActive()) {
-    viewerMessaging.send({topic: 'content-uptime', forPresentationId: expectedTemplate.presentationId});
+  if (playingItem && playingItem.presentationType === 'HTML Template' && uptime.isActive()) {
+    viewerMessaging.send({topic: 'content-uptime', forPresentationId: playingItem.presentationId});
+    expectedTemplate = playingItem;
     responseTimeoutId = setTimeout(handleNoResponse, responseTimeout);
   }
 }
@@ -56,7 +66,7 @@ function handlePlayingItemFromViewer(response) {
 
 function handlePlayingItem(item) {
   console.log('playing item received', item);
-  expectedTemplate = item;
+  playingItem = item;
 }
 
 module.exports = {
