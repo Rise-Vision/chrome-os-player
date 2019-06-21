@@ -4,6 +4,7 @@ const logger = require("../../../src/logging/logger");
 
 const schedulePlayer = require("../../../src/scheduling/schedule-player");
 const scheduleParser = require("../../../src/scheduling/schedule-parser");
+const playUntilDoneTracker = require("../../../src/scheduling/play-until-done-tracker");
 const systemInfo = require('../../../src/logging/system-info');
 
 const sandbox = sinon.createSandbox();
@@ -407,6 +408,56 @@ describe("Schedule Player", ()=>{
         assert.equal(played.filter(url=>url.endsWith("1")).length, 4);
         assert.equal(played.filter(url=>url.endsWith("2")).length, 3);
         assert.equal(played[played.length - 1], "test-url-1");
+      });
+    });
+
+    describe("24x7 primary schedule with two PUD items", ()=>{
+
+      beforeEach(() => {
+        sandbox.stub(playUntilDoneTracker, "isDone").returns(false);
+      });
+
+      const testData = {content: {
+        schedule: {
+          name: "test schedule",
+          timeDefined: false,
+          items: [
+            {
+              name: "test item 5",
+              timeDefined: false,
+              objectReference: "test-url-1",
+              duration: 10,
+              playUntilDone: true
+            },
+            {
+              name: "test item 6",
+              timeDefined: false,
+              objectReference: "test-url-2",
+              duration: 10,
+              playUntilDone: true
+            }
+          ]
+        }
+      }};
+
+      it("plays the first item until it is done then play the second item", ()=>{
+        simulatedTimeDate = new Date("12-23-2018 3:00:00 PM");
+
+        scheduleParser.setContent(testData);
+        schedulePlayer.stop();
+        schedulePlayer.start();
+
+        timeTravelTo("12-23-2018 3:00:01 PM");
+        assert.equal(played.length, 1);
+
+        timeTravelTo("12-23-2018 3:00:11 PM");
+        assert.equal(played.length, 1);
+
+        playUntilDoneTracker.isDone.returns(true);
+        timeTravelTo("12-23-2018 3:00:12 PM");
+
+        assert.equal(played.length, 2);
+        assert.equal(played[played.length - 1], "test-url-2");
       });
     });
 
