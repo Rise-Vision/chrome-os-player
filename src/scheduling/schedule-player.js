@@ -1,5 +1,7 @@
+/* eslint-disable max-statements */
 const logger = require("../logging/logger");
 const scheduleParser = require("./schedule-parser");
+const playUntilDoneTracker = require("./play-until-done-tracker");
 
 const nothingPlayingListeners = [];
 const timers = {
@@ -63,6 +65,11 @@ function playCurrentlyPlayableItems(now) {
 }
 
 function playItems() {
+  if (playingItem && playingItem.playUntilDone && !playUntilDoneTracker.isDone()) {
+    timers.itemDuration = setTimeout(playItems, 1000); // eslint-disable-line no-magic-numbers
+    return;
+  }
+
   const nextItem = playableItems.shift();
   playableItems.push(nextItem);
 
@@ -70,10 +77,11 @@ function playItems() {
   playingItem = nextItem;
 
   if (!previousItem || previousItem.objectReference !== nextItem.objectReference) {
+    playUntilDoneTracker.reset();
     playUrl(nextItem.objectReference);
   }
 
-  timers.itemDuration = setTimeout(playItems, nextItem.duration * 1000); // eslint-disable-line no-magic-numbers
+  timers.itemDuration = setTimeout(playItems, nextItem.playUntilDone ? 1000 : nextItem.duration * 1000); // eslint-disable-line no-magic-numbers
 }
 
 function playUrl(url) {playUrlHandler(url);}
