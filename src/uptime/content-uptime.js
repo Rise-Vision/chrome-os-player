@@ -2,8 +2,8 @@ const viewerMessaging = require('../messaging/viewer-messaging');
 const logger = require('../logging/logger');
 const uptime = require('./uptime');
 
-const uptimeInterval = 10000;
-const responseTimeout = 3000;
+const uptimeInterval = 5 * 60000; // eslint-disable-line no-magic-numbers
+const responseTimeout = 6000;
 let responseTimeoutId = null;
 let playingItem = null;
 let expectedTemplate = null;
