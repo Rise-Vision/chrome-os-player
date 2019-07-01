@@ -223,7 +223,19 @@ describe("Schedule Player", ()=>{
       sinon.assert.calledWith(logger.log, "no playable items");
     });
 
-    it("plays playable items", ()=>{
+    it("notifies not playing any item", ()=>{
+      const listener = sandbox.stub();
+
+      scheduleParser.setContent(null);
+      schedulePlayer.listenForPlayingItem(listener);
+      schedulePlayer.start();
+
+      sinon.assert.calledWith(listener, null);
+    });
+
+    it("plays playable items and notify listeners", ()=>{
+      const listener = sandbox.stub();
+
       setTimeout.reset();
       setTimeout.onFirstCall().yields();
 
@@ -248,12 +260,16 @@ describe("Schedule Player", ()=>{
         }
       }};
       scheduleParser.setContent(testData);
+      schedulePlayer.listenForPlayingItem(listener);
       schedulePlayer.start();
 
       assert(played.includes("test-url-1") && played.includes("test-url-2"));
+      sinon.assert.calledWith(listener, testData.content.schedule.items[0]);
+      sinon.assert.calledWith(listener, testData.content.schedule.items[1]);
     });
 
     it("doesn't play playable items if they have no duration", ()=>{
+      const listener = sandbox.stub();
       setTimeout.reset();
       setTimeout.onFirstCall().yields();
 
@@ -277,9 +293,11 @@ describe("Schedule Player", ()=>{
         }
       }};
       scheduleParser.setContent(testData);
+      schedulePlayer.listenForPlayingItem(listener);
       schedulePlayer.start();
 
       assert.equal(played.length, 0);
+      sinon.assert.calledWith(listener, null);
     });
 
     it("doesn't reload a url duplicated in multiple schedule items", ()=>{

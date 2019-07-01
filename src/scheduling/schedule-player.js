@@ -35,8 +35,7 @@ module.exports = {
     playingItem = null;
     notifyPlayingItem();
   },
-  now() {return new Date();},
-  getPlayingItem() {return playingItem;}
+  now() {return new Date();}
 };
 
 function considerFutureScheduledItems(now) {
