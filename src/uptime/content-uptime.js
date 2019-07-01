@@ -60,12 +60,10 @@ function retrieveUptime() {
 }
 
 function handlePlayingItemFromViewer(response) {
-  console.log('playing item received from Viewer', response);
   handlePlayingItem(response.item);
 }
 
 function handlePlayingItem(item) {
-  console.log('playing item received', item);
   playingItem = item;
 }
 
