@@ -3,7 +3,6 @@ const sinon = require("sinon");
 const viewerMessaging = require("../../../src/messaging/viewer-messaging");
 
 const contentUptime = require("../../../src/uptime/content-uptime");
-const uptime = require("../../../src/uptime/uptime");
 const logger = require("../../../src/logging/logger");
 
 const sandbox = sinon.createSandbox();
@@ -17,7 +16,6 @@ describe("Content Uptime", () => {
     clock = sandbox.useFakeTimers();
     sandbox.stub(viewerMessaging, "on");
     sandbox.stub(viewerMessaging, "send");
-    sandbox.stub(uptime, "isActive").returns(true);
     sandbox.stub(logger, "log");
     sandbox.stub(logger, "logTemplateUptime");
     sandbox.stub(logger, "logComponentUptime");
@@ -52,14 +50,6 @@ describe("Content Uptime", () => {
     validPlayingItem.presentationType = "Presentation";
 
     contentUptime.handlePlayingItem(validPlayingItem);
-    contentUptime.init();
-    clock.tick(300000);
-    sinon.assert.notCalled(viewerMessaging.send);
-  });
-
-  it("doesn't retrive uptime if inactive", ()=>{
-    uptime.isActive.returns(false);
-
     contentUptime.init();
     clock.tick(300000);
     sinon.assert.notCalled(viewerMessaging.send);

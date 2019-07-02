@@ -1,6 +1,5 @@
 const viewerMessaging = require('../messaging/viewer-messaging');
 const logger = require('../logging/logger');
-const uptime = require('./uptime');
 
 const uptimeInterval = 5 * 60000; // eslint-disable-line no-magic-numbers
 const responseTimeout = 6000;
@@ -52,7 +51,7 @@ function init() {
 }
 
 function retrieveUptime() {
-  if (playingItem && playingItem.presentationType === 'HTML Template' && uptime.isActive()) {
+  if (playingItem && playingItem.presentationType === 'HTML Template') {
     viewerMessaging.send({topic: 'content-uptime', forPresentationId: playingItem.presentationId});
     expectedTemplate = playingItem;
     responseTimeoutId = setTimeout(handleNoResponse, responseTimeout);
