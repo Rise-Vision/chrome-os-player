@@ -5,7 +5,7 @@ module.exports = {
     if (!contentData || !contentData.content || !contentData.content.schedule ||
     !contentData.content.schedule.items) {return contentData;}
 
-    const restructuredData = Object.assign({}, contentData);
+    const restructuredData = JSON.parse(JSON.stringify(contentData));
 
     const HTMLTemplateURL = "http://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID";
     const isBeta = systemInfo.isBeta();
