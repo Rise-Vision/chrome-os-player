@@ -69,6 +69,32 @@ function logUptime(connected, showing, scheduled, nowDate = new Date()) {
     .catch(err => error('error when logging uptime', err));
 }
 
+function logTemplateUptime(result, nowDate = new Date()) {
+  console.log('template uptime', result, nowDate);
+  if (environment.isDevelopmentVersion()) {return Promise.resolve();}
+
+  return systemInfo.getId()
+    .then(id => {
+      result.display_id = id;
+      result.ts = nowDate.toISOString();
+      return bq.insert(result, 'Template_Uptime_Events', 'events', nowDate);
+    })
+    .catch(err => error('error when logging Template uptime', err));
+}
+
+function logComponentUptime(result, nowDate = new Date()) {
+  console.log('component uptime', result, nowDate);
+  if (environment.isDevelopmentVersion()) {return Promise.resolve();}
+
+  return systemInfo.getId()
+    .then(id => {
+      result.display_id = id;
+      result.ts = nowDate.toISOString();
+      return bq.insert(result, 'Component_Uptime_Events', 'events', nowDate);
+    })
+    .catch(err => error('error when logging Component uptime', err));
+}
+
 /**
  * @param {string} event
  * @param {object} [details]
@@ -118,5 +144,7 @@ module.exports = {
   log,
   logClientInfo,
   logUptime,
+  logTemplateUptime,
+  logComponentUptime,
   error
 }

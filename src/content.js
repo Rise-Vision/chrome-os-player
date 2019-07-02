@@ -12,6 +12,7 @@ const fileServer = require('./storage/file-server');
 const launchEnv = require('./launch-environment');
 const screenshot = require('./screenshot');
 const uptime = require('./uptime/uptime');
+const contentUptime = require('./uptime/content-uptime');
 const uptimeRendererHealth = require('./uptime/renderer-health');
 const scheduleParser = require('./scheduling/schedule-parser');
 const noViewerSchedulePlayer = require('./scheduling/schedule-player');
@@ -171,6 +172,7 @@ function loadContent(contentData) {
 function init() {
   noViewerSchedulePlayer.setPlayUrlHandler(loadUrl);
   noViewerSchedulePlayer.listenForNothingPlaying(() => loadUrl(chrome.runtime.getURL('black-screen.html')));
+  noViewerSchedulePlayer.listenForPlayingItem(contentUptime.handlePlayingItem);
 
   launchEnv.init()
   .then(() => {
@@ -181,6 +183,7 @@ function init() {
       .catch(error => logger.error('player - error when initilizing modules', error));
     fileServer.init();
     uptime.init();
+    contentUptime.init();
     fetchContent();
   });
 

@@ -4,6 +4,7 @@ const scheduleParser = require("./schedule-parser");
 const playUntilDoneTracker = require("./play-until-done-tracker");
 
 const nothingPlayingListeners = [];
+const playingItemListeners = [];
 const timers = {
   scheduleCheck: null,
   itemDuration: null
@@ -30,9 +31,11 @@ module.exports = {
   },
   setPlayUrlHandler(fn) {playUrlHandler = fn;},
   listenForNothingPlaying(listener) {nothingPlayingListeners.push(listener);},
+  listenForPlayingItem(listener) {playingItemListeners.push(listener);},
   stop() {
     Object.values(timers).forEach(clearTimeout);
     playingItem = null;
+    notifyPlayingItem();
   },
   now() {return new Date();}
 };
@@ -75,6 +78,7 @@ function playItems() {
 
   const previousItem = playingItem;
   playingItem = nextItem;
+  notifyPlayingItem();
 
   if (!previousItem || previousItem.objectReference !== nextItem.objectReference) {
     playUntilDoneTracker.reset();
@@ -121,6 +125,7 @@ function millisUntilTomorrow(now) {
 function nothingPlaying() {
   clearTimeout(timers.itemDuration);
   playingItem = null;
+  notifyPlayingItem();
   nothingPlayingListeners.forEach(listener=>listener());
 }
 
@@ -132,4 +137,8 @@ function logWithScheduleData(event) {
   }
 
   logger.log(event, scheduleData);
+}
+
+function notifyPlayingItem() {
+  playingItemListeners.forEach(listener=>listener(playingItem));
 }

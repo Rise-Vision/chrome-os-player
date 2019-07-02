@@ -208,4 +208,38 @@ describe('Logger', () => {
       });
   });
 
+  it('should log template uptime to big query', () => {
+    const nowDate = new Date();
+    const data = {
+      presentation_id: 'presentationId',
+      template_product_code: 'templateProductCode',
+      template_version: 'templateVersion',
+      responding: true,
+      error: false
+    };
+
+    return logger.logTemplateUptime(data, nowDate)
+      .then(() => {
+        sinon.assert.calledWith(bq.insert, {...data, display_id: 'displayId', ts: nowDate.toISOString()}, 'Template_Uptime_Events', 'events');
+      });
+  });
+
+  it('should log component uptime to big query', () => {
+    const nowDate = new Date();
+    const data = {
+      presentation_id: 'presentationId',
+      template_product_code: 'templateProductCode',
+      template_version: 'templateVersion',
+      componentType: 'componentType',
+      componentId: 'componentId',
+      responding: true,
+      error: false
+    };
+
+    return logger.logComponentUptime(data, nowDate)
+      .then(() => {
+        sinon.assert.calledWith(bq.insert, {...data, display_id: 'displayId', ts: nowDate.toISOString()}, 'Component_Uptime_Events', 'events');
+      });
+  });
+
 });

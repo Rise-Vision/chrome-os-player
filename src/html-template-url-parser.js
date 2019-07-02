@@ -5,7 +5,7 @@ module.exports = {
     if (!contentData || !contentData.content || !contentData.content.schedule ||
     !contentData.content.schedule.items) {return contentData;}
 
-    const restructuredData = Object.assign({}, contentData);
+    const restructuredData = JSON.parse(JSON.stringify(contentData));
 
     const HTMLTemplateURL = "http://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID";
     const isBeta = systemInfo.isBeta();
@@ -14,10 +14,13 @@ module.exports = {
     .filter(item=>item.presentationType === "HTML Template")
     .forEach(item=>{
       item.type = "url";
+      item.presentationId = item.objectReference;
+      item.productCode = getPCode(item.objectReference, contentData);
+      item.version = isBeta ? "beta" : "stable";
       item.objectReference = HTMLTemplateURL
-        .replace("STAGE", isBeta ? "beta" : "stable")
-        .replace("PCODE", getPCode(item.objectReference, contentData))
-        .replace("PID", item.objectReference);
+        .replace("STAGE", item.version)
+        .replace("PCODE", item.productCode)
+        .replace("PID", item.presentationId);
     });
 
     return restructuredData;
