@@ -8,10 +8,10 @@ let playingItem = null;
 let expectedTemplate = null;
 
 function handleUptimeResponse(response) {
-  logger.log('uptime - result', JSON.stringify(response));
+  logger.log('content uptime - result', JSON.stringify(response));
 
   if (!expectedTemplate || !isValidResponse(response)) {
-    logger.log('uptime - invalid result', JSON.stringify(response));
+    logger.log('content uptime - invalid result', JSON.stringify(response));
     return;
   }
 
@@ -31,7 +31,7 @@ function isValidResponse(response) {
 }
 
 function handleNoResponse() {
-  logger.log('uptime - no response', expectedTemplate);
+  logger.log('content uptime - no response', JSON.stringify(expectedTemplate));
   if (expectedTemplate) {
     logger.logTemplateUptime({
       presentation_id: expectedTemplate.presentationId,

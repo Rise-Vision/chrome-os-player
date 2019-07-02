@@ -58,7 +58,7 @@ describe("Content Uptime", () => {
   it("handles no response", ()=>{
     contentUptime.init();
     clock.tick(306000);
-    sinon.assert.calledWith(logger.log, "uptime - no response");
+    sinon.assert.calledWith(logger.log, "content uptime - no response");
 
     sinon.assert.calledWith(logger.logTemplateUptime, {
       presentation_id: validPlayingItem.presentationId,
@@ -81,7 +81,7 @@ describe("Content Uptime", () => {
       components: []
     });
 
-    sinon.assert.calledWith(logger.log, "uptime - result");
+    sinon.assert.calledWith(logger.log, "content uptime - result");
     sinon.assert.calledWith(logger.logTemplateUptime, {
       presentation_id: validPlayingItem.presentationId,
       template_product_code: validPlayingItem.productCode,
@@ -113,7 +113,7 @@ describe("Content Uptime", () => {
       components: [componentResult]
     });
 
-    sinon.assert.calledWith(logger.log, "uptime - result");
+    sinon.assert.calledWith(logger.log, "content uptime - result");
     sinon.assert.calledWith(logger.logTemplateUptime, {
       presentation_id: validPlayingItem.presentationId,
       template_product_code: validPlayingItem.productCode,
@@ -137,7 +137,7 @@ describe("Content Uptime", () => {
       components: []
     });
 
-    sinon.assert.calledWith(logger.log, "uptime - result");
+    sinon.assert.calledWith(logger.log, "content uptime - result");
     sinon.assert.notCalled(logger.logTemplateUptime);
   });
 
@@ -157,7 +157,7 @@ describe("Content Uptime", () => {
       components: []
     });
 
-    sinon.assert.calledWith(logger.log, "uptime - result");
+    sinon.assert.calledWith(logger.log, "content uptime - result");
     sinon.assert.notCalled(logger.logTemplateUptime);
     sinon.assert.notCalled(logger.logComponentUptime);
   });
