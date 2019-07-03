@@ -58,7 +58,10 @@ function insertMultiple(entries, dataset, table) {
   return refreshToken(nowDate).then(() => {
     const insertData = config.insertSchema;
     insertData.rows = entries.map(entry => {
-      return {json: entry, insertId: entry.ts};
+      return {
+        json: entry,
+        insertId: Math.random().toString(36).substr(2).toUpperCase() // eslint-disable-line no-magic-numbers
+      };
     });
 
     const options = {
