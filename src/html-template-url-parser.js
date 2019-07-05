@@ -7,7 +7,7 @@ module.exports = {
 
     const restructuredData = JSON.parse(JSON.stringify(contentData));
 
-    const HTMLTemplateURL = "http://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID";
+    const HTMLTemplateURL = "https://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID";
     const isBeta = systemInfo.isBeta();
 
     restructuredData.content.schedule.items
