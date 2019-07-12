@@ -9,7 +9,7 @@ const presets = [
   ]
 ];
 
-const plugins = ["transform-es2015-modules-commonjs"];
+const plugins = ["@babel/plugin-transform-modules-commonjs"];
 
 module.exports = {
   presets,
