@@ -1,6 +1,7 @@
 const path = require("path");
 
 module.exports = {
+  mode: "none",
   entry: {
     background: path.join(__dirname, "src", "background.js"),
     registration: path.join(__dirname, "src", "display-registration/registration.js"),
