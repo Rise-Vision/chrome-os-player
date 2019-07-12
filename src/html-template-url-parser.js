@@ -1,4 +1,5 @@
 const systemInfo = require('./logging/system-info');
+const scheduleParser = require('./scheduling/schedule-parser');
 
 module.exports = {
   restructureHTMLTemplatesToURLItems(contentData) {
@@ -7,7 +8,9 @@ module.exports = {
 
     const restructuredData = JSON.parse(JSON.stringify(contentData));
 
-    const HTMLTemplateURL = "https://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID";
+    const protocol = scheduleParser.hasOnlyNoViewerURLItems(contentData) ? "https" : "http";
+
+    const HTMLTemplateURL = `${protocol}://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID`;
     const isBeta = systemInfo.isBeta();
 
     restructuredData.content.schedule.items

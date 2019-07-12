@@ -88,7 +88,7 @@ describe('Content Loader', () => {
     });
   });
 
-  it('should rewrite HTML Template presentations', () => {
+  it('should rewrite HTML Template presentations using HTTPS when schedule supports no-viewer mode', () => {
     chrome.storage.local.get.yields({displayId: 'displayId'});
     const testObjRef = "test-obj-ref";
     const testPCode = "test-p-code";
@@ -115,7 +115,52 @@ describe('Content Loader', () => {
             },
             {
               "type": "presentation",
-              "presentationType": "NOT HTML Template",
+              "presentationType": "HTML Template",
+              "objectReference": "other-obj-ref"
+            }
+          ]
+        }
+      }
+    };
+    sandbox.stub(gcsClient, 'fetchJson').resolves(contentData);
+    sandbox.stub(systemInfo, 'isBeta').returns(false);
+
+    return contentLoader.loadContent().then((data) => {
+      const items = data.content.schedule.items;
+      assert.equal(items[0].type, "url");
+      assert.equal(items[0].objectReference, computedTemplateURL);
+      assert.equal(items[1].type, "url");
+    });
+  });
+
+  it('should rewrite HTML Template presentations using HTTP when schedule runs on viewer', () => {
+    chrome.storage.local.get.yields({displayId: 'displayId'});
+    const testObjRef = "test-obj-ref";
+    const testPCode = "test-p-code";
+    const computedTemplateURL = `http://widgets.risevision.com/stable/templates/${testPCode}/src/template.html?presentationId=${testObjRef}`;
+
+    const contentData = {
+      content: {
+        presentations: [
+          {
+            "id": testObjRef,
+            "productCode": testPCode
+          },
+          {
+            "id": "other-obj-ref",
+            "productCode": "other-p-code"
+          }
+        ],
+        schedule: {
+          items: [
+            {
+              "type": "presentation",
+              "presentationType": "HTML Template",
+              "objectReference": testObjRef
+            },
+            {
+              "type": "presentation",
+              "presentationType": "Non HTML Template",
               "objectReference": "other-obj-ref"
             }
           ]
