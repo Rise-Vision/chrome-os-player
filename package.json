@@ -39,21 +39,21 @@
     "commander": "^2.15.1",
     "eslint": "^6.0.1",
     "html-loader": "^0.5.5",
-    "mocha": "^5.1.1",
-    "mocha-junit-reporter": "^1.15.0",
+    "mocha": "^5.2.0",
+    "mocha-junit-reporter": "^1.23.0",
     "nyc": "^13.3.0",
-    "rimraf": "^2.6.2",
+    "rimraf": "^2.6.3",
     "sinon": "^4.5.0",
     "sinon-chrome": "^2.3.2",
     "webpack": "^3.12.0"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0",
-    "@stardazed/streams-polyfill": "^1.0.4",
+    "@stardazed/streams-polyfill": "^1.0.7",
     "gcs-filepath-validator": "^1.0.0",
     "lodash.isequal": "^4.5.0",
-    "lokijs": "^1.5.5",
-    "moment-timezone": "^0.5.17",
+    "lokijs": "^1.5.6",
+    "moment-timezone": "^0.5.26",
     "pixelmatch": "^4.0.2"
   },
   "nyc": {
