@@ -1,4 +1,4 @@
-const coreUrl = 'https://rvaserver2.appspot.com';
+const coreUrl = 'https://rvacore-test.appspot.com';
 const claimUrl = `${coreUrl}/v2/viewer/display`;
 
 module.exports = (id, name) => {

@@ -10,7 +10,7 @@ const displayConfigBucket = 'risevision-display-notifications';
 const MAX_RETRIES = 10;
 const RETRY_INTERVAL = 10000;
 const ACTIVE_STATUSES = ["Free", "On Trial", "Subscribed"];
-const SUBSCRIPTION_API_SERVER = 'store-dot-rvaserver2.appspot.com';
+const SUBSCRIPTION_API_SERVER = 'store-dot-rvacore-test.appspot.com';
 const STORAGE_PRODUCT_CODE = 'b0cba08a4baa0c62b8cdc621b6f6a124f89a03db';
 const STORAGE_SUBSCRIPTION_URL = `https://${SUBSCRIPTION_API_SERVER}/v1/company/CID/product/status?pc=${STORAGE_PRODUCT_CODE}`;
 const MINUTES = 60 * 1000; // eslint-disable-line no-magic-numbers

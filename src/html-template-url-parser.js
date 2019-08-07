@@ -1,4 +1,3 @@
-const systemInfo = require('./logging/system-info');
 const scheduleParser = require('./scheduling/schedule-parser');
 
 module.exports = {
@@ -11,7 +10,6 @@ module.exports = {
     const protocol = scheduleParser.hasOnlyNoViewerURLItems(contentData) ? "https" : "http";
 
     const HTMLTemplateURL = `${protocol}://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID`;
-    const isBeta = systemInfo.isBeta();
 
     restructuredData.content.schedule.items
     .filter(item=>item.presentationType === "HTML Template")
@@ -19,7 +17,7 @@ module.exports = {
       item.type = "url";
       item.presentationId = item.objectReference;
       item.productCode = getPCode(item.objectReference, contentData);
-      item.version = isBeta ? "beta" : "stable";
+      item.version = "beta";
       item.objectReference = HTMLTemplateURL
         .replace("STAGE", item.version)
         .replace("PCODE", item.productCode)
