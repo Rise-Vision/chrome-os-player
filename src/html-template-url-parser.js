@@ -10,7 +10,7 @@ module.exports = {
 
     const protocol = scheduleParser.hasOnlyNoViewerURLItems(contentData) ? "https" : "http";
 
-    const HTMLTemplateURL = `${protocol}://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID`;
+    const HTMLTemplateURL = `${protocol}://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID&waitForPlayer=true`;
     const isBeta = systemInfo.isBeta();
 
     restructuredData.content.schedule.items
