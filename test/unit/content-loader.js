@@ -92,7 +92,7 @@ describe('Content Loader', () => {
     chrome.storage.local.get.yields({displayId: 'displayId'});
     const testObjRef = "test-obj-ref";
     const testPCode = "test-p-code";
-    const computedTemplateURL = `https://widgets.risevision.com/stable/templates/${testPCode}/src/template.html?presentationId=${testObjRef}`;
+    const computedTemplateURL = `https://widgets.risevision.com/stable/templates/${testPCode}/src/template.html?presentationId=${testObjRef}&waitForPlayer=true`;
 
     const contentData = {
       content: {
@@ -137,7 +137,7 @@ describe('Content Loader', () => {
     chrome.storage.local.get.yields({displayId: 'displayId'});
     const testObjRef = "test-obj-ref";
     const testPCode = "test-p-code";
-    const computedTemplateURL = `http://widgets.risevision.com/stable/templates/${testPCode}/src/template.html?presentationId=${testObjRef}`;
+    const computedTemplateURL = `http://widgets.risevision.com/stable/templates/${testPCode}/src/template.html?presentationId=${testObjRef}&waitForPlayer=true`;
 
     const contentData = {
       content: {
