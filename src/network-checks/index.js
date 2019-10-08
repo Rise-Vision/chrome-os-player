@@ -62,7 +62,7 @@ module.exports = {
     isComplete = false;
     module.exports.checkSites();
   },
-  waitForViewer(attempt = 0, timeout = 1000) { // eslint-disable-line no-magic-numbers
+  waitForViewer(attempt = 1, timeout = 1000) { // eslint-disable-line no-magic-numbers
     return fetch("http://viewer.risevision.com")
     .then(resp => resp.ok ? resp : Promise.reject(Error(`${resp.statusText}`)))
     .catch(error => {
