@@ -68,6 +68,8 @@ function playCurrentlyPlayableItems(now) {
 }
 
 function playItems() {
+  clearTimeout(timers.itemDuration);
+
   if (playingItem && playingItem.playUntilDone && !playUntilDoneTracker.isDone()) {
     timers.itemDuration = setTimeout(playItems, 1000); // eslint-disable-line no-magic-numbers
     return;
