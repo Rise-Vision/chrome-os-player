@@ -1,3 +1,5 @@
+const scheduleParser = require('../scheduling/schedule-parser');
+
 const dataHandlerRegisteredObserver = {
   init() {
     this.messageReceived = false;
@@ -89,6 +91,10 @@ function handleMessage(data) {
 
 function viewerCanReceiveContent() {
   return new Promise(resolve => {
+    if (scheduleParser.hasOnlyNoViewerURLItems()) {
+      return resolve();
+    }
+
     dataHandlerRegisteredObserver.resolvers.push(resolve);
     if (dataHandlerRegisteredObserver.messageReceived) {
       dataHandlerRegisteredObserver.resolve();
