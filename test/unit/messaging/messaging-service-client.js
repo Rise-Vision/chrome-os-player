@@ -38,6 +38,22 @@ describe('Messaging Service Client', () => {
     });
   });
 
+  it('should connect to staging messaging service when player configured to stage', () => {
+    const displayId = 'displayId';
+    const machineId = 'machineId';
+    chrome.storage.local.get.yields({displayId, machineId, environment: "stage"});
+
+    connection.on.withArgs('open').yields();
+
+    const expectedMSUrl = 'https://services-stage.risevision.com/messaging/primus/?displayId=displayId&machineId=machineId';
+    const expectedPrimusOptions = {reconnect: {max: 1800000, min: 2000, retries: Infinity}, manual: true};
+
+    return messagingServiceClient.init().then(() => {
+      sinon.assert.calledWith(Primus.connect, expectedMSUrl, expectedPrimusOptions);
+      sinon.assert.calledOnce(connection.open);
+    });
+  });
+
   function shouldLogEvent(eventName, logMessage) {
     connection.on.withArgs(eventName).yields();
 
