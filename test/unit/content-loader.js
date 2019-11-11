@@ -3,7 +3,6 @@ const assert = require('assert');
 const sinon = require('sinon');
 const chrome = require('sinon-chrome/apps');
 const gcsClient = require('../../src/gcs-client');
-const systemInfo = require('../../src/logging/system-info');
 const logger = require('../../src/logging/logger');
 
 const contentLoader = require('../../src/content-loader');
@@ -123,7 +122,6 @@ describe('Content Loader', () => {
       }
     };
     sandbox.stub(gcsClient, 'fetchJson').resolves(contentData);
-    sandbox.stub(systemInfo, 'isBeta').returns(false);
 
     return contentLoader.loadContent().then((data) => {
       const items = data.content.schedule.items;
@@ -168,13 +166,54 @@ describe('Content Loader', () => {
       }
     };
     sandbox.stub(gcsClient, 'fetchJson').resolves(contentData);
-    sandbox.stub(systemInfo, 'isBeta').returns(false);
 
     return contentLoader.loadContent().then((data) => {
       const items = data.content.schedule.items;
       assert.equal(items[0].type, "url");
       assert.equal(items[0].objectReference, computedTemplateURL);
       assert.equal(items[1].type, "presentation");
+    });
+  });
+
+  it('should rewrite HTML Template presentations using staging environment when player configured to stage', () => {
+    chrome.storage.local.get.yields({displayId: 'displayId', environment: "stage"});
+    const testObjRef = "test-obj-ref";
+    const testPCode = "test-p-code";
+    const computedTemplateURL = `https://widgets.risevision.com/staging/templates/${testPCode}/src/template.html?presentationId=${testObjRef}&waitForPlayer=true`;
+
+    const contentData = {
+      content: {
+        presentations: [
+          {
+            "id": testObjRef,
+            "productCode": testPCode
+          },
+          {
+            "id": "other-obj-ref",
+            "productCode": "other-p-code"
+          }
+        ],
+        schedule: {
+          items: [
+            {
+              "type": "presentation",
+              "presentationType": "HTML Template",
+              "objectReference": testObjRef
+            },
+            {
+              "type": "presentation",
+              "presentationType": "HTML Template",
+              "objectReference": "other-obj-ref"
+            }
+          ]
+        }
+      }
+    };
+    sandbox.stub(gcsClient, 'fetchJson').resolves(contentData);
+
+    return contentLoader.loadContent().then((data) => {
+      const items = data.content.schedule.items;
+      assert.equal(items[0].objectReference, computedTemplateURL);
     });
   });
 

@@ -2,19 +2,15 @@ const gcsClient = require('./gcs-client');
 const updateFrequencyLogger = require('./update-frequency-logger');
 const logger = require('./logging/logger');
 const htmlTemplateURLParser = require('./html-template-url-parser');
-
-
-function readDisplayId() {
-  return new Promise((resolve) => chrome.storage.local.get(items => resolve(items.displayId)));
-}
+const systemInfo = require('./logging/system-info');
 
 function fetchContent() {
-  return readDisplayId().then(displayId => {
+  return systemInfo.getDisplayId().then(displayId => {
     const bucketName = 'risevision-display-notifications';
     const filePath = `${displayId}/content.json`;
     return gcsClient.fetchJson(bucketName, filePath);
   })
-  .then((contentData) => {
+  .then(contentData => {
     if (!contentData || Object.keys(contentData).length === 0) {
       logger.error('player - empty content data');
       return null;
@@ -41,7 +37,7 @@ function loadData() {
 }
 
 function loadContent() {
-  return loadData().then((contentData) => { // eslint-disable-line max-statements
+  return Promise.all([loadData(), systemInfo.isStageEnvironment()]).then(([contentData, isStaging]) => { // eslint-disable-line max-statements
     const supportedWidgets = ['image', 'video', 'google-calendar', 'google-spreadsheet', 'html', 'rss', 'text', 'time-date', 'web-page'];
     const regex = new RegExp(`http(?:s?)://s3.amazonaws.com/widget-(${supportedWidgets.join('|')})`, 'g');
     const rewriteUrl = (match, widgetName) => `http://widgets.risevision.com/widget-${widgetName}`; // eslint-disable-line func-style
@@ -57,7 +53,7 @@ function loadContent() {
     }
 
     return hasScheduleItems && hasPresentations ?
-      htmlTemplateURLParser.restructureHTMLTemplatesToURLItems(contentData) :
+      htmlTemplateURLParser.restructureHTMLTemplatesToURLItems(contentData, isStaging) :
       contentData;
   });
 }
