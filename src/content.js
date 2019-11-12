@@ -178,13 +178,13 @@ function init() {
   .then(() => {
     setUpMessaging()
       .then(storage.init)
+      .then(fetchContent)
       .then(licensing.init)
       .then(debugDataRequest.init)
       .catch(error => logger.error('player - error when initilizing modules', error));
     fileServer.init();
     uptime.init();
     contentUptime.init();
-    fetchContent();
   });
 
   const webview = document.querySelector('webview');

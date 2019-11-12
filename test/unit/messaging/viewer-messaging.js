@@ -2,6 +2,7 @@ const sinon = require('sinon');
 const chrome = require('sinon-chrome/apps');
 
 const viewerMessaging = require('../../../src/messaging/viewer-messaging');
+const scheduleParser = require('../../../src/scheduling/schedule-parser');
 
 const sandbox = sinon.createSandbox();
 const window = {addEventListener() {}};
@@ -47,6 +48,14 @@ describe('Viewer Messaging', () => {
     onMessageEvent({data, preventDefault() {}});
 
     return Promise.all(promises);
+  });
+
+  it('should not wait for message from Viewer when running in no-Viewer mode', () => {
+    sandbox.stub(scheduleParser, 'hasOnlyNoViewerURLItems').returns(true);
+
+    const promise = viewerMessaging.viewerCanReceiveContent();
+
+    return promise;
   });
 
   it('should respond to client list request message', () => {
