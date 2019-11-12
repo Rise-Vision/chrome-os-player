@@ -44,6 +44,17 @@ function getId() {
   });
 }
 
+function isStageEnvironment() {
+  return readLocalStorage()
+    .then(items => items.environment)
+    .then(environment => {
+      if (!environment) {
+        return false;
+      }
+      return environment.toLowerCase() === "stage"
+    });
+}
+
 function getPlayerVersion(options = {includeBetaPrefix: true}) {
   const manifest = chrome.runtime.getManifest();
   if (options.includeBetaPrefix && isBeta()) {
@@ -114,5 +125,6 @@ module.exports = {
   getChromeVersion,
   getChromeOSVersion,
   getAppId,
-  isBeta
+  isBeta,
+  isStageEnvironment
 }

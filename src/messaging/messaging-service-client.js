@@ -8,8 +8,9 @@ const messageHandlers = {};
 let connection = null;
 let readyState = null;
 
-function connect(displayId, machineId) {
-  const url = `https://services.risevision.com/messaging/primus/?displayId=${displayId}&machineId=${machineId}`;
+function connect(displayId, machineId, isStaging) {
+  const environment = isStaging ? "-stage" : "";
+  const url = `https://services${environment}.risevision.com/messaging/primus/?displayId=${displayId}&machineId=${machineId}`;
   connection = Primus.connect(url, {
     reconnect: {
       max: 1800000,
@@ -46,14 +47,14 @@ function connect(displayId, machineId) {
   });
 }
 
-function readDisplayAndMachineIds() {
-  return Promise.all([systemInfo.getDisplayId(), systemInfo.getMachineId()])
+function readSettings() {
+  return Promise.all([systemInfo.getDisplayId(), systemInfo.getMachineId(), systemInfo.isStageEnvironment()])
 }
 
 function init() {
-  return readDisplayAndMachineIds().then((values) => {
-    const [displayId, machineId] = values;
-    return connect(displayId, machineId);
+  return readSettings().then((values) => {
+    const [displayId, machineId, isStaging] = values;
+    return connect(displayId, machineId, isStaging);
   });
 }
 

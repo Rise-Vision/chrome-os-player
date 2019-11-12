@@ -10,9 +10,10 @@ const displayConfigBucket = 'risevision-display-notifications';
 const MAX_RETRIES = 10;
 const RETRY_INTERVAL = 10000;
 const ACTIVE_STATUSES = ["Free", "On Trial", "Subscribed"];
-const SUBSCRIPTION_API_SERVER = 'store-dot-rvaserver2.appspot.com';
 const STORAGE_PRODUCT_CODE = 'b0cba08a4baa0c62b8cdc621b6f6a124f89a03db';
-const STORAGE_SUBSCRIPTION_URL = `https://${SUBSCRIPTION_API_SERVER}/v1/company/CID/product/status?pc=${STORAGE_PRODUCT_CODE}`;
+const STORAGE_SUBSCRIPTION_URL = `https://store-dot-rvaserver2.appspot.com/v1/company/CID/product/status?pc=${STORAGE_PRODUCT_CODE}`;
+const STORAGE_SUBSCRIPTION_URL_STAGE = `https://store-dot-rvacore-test.appspot.com/v1/company/CID/product/status?pc=${STORAGE_PRODUCT_CODE}`;
+
 const MINUTES = 60 * 1000; // eslint-disable-line no-magic-numbers
 const ONE_DAY_MS = 24 * 60 * MINUTES; // eslint-disable-line no-magic-numbers
 const ONE_HOUR_MS = ONE_DAY_MS / 24; // eslint-disable-line no-magic-numbers
@@ -85,10 +86,12 @@ function resolveCompanyId(resolver, {topic, status, filePath, ospath} = {}) {
 }
 
 function querySubscriptionAPI(cid) {
-  const url = STORAGE_SUBSCRIPTION_URL.replace("CID", cid);
-
-  return util.fetchWithRetry(url, {}, MAX_RETRIES, RETRY_INTERVAL)
-  .then(resp=>resp.json());
+  return systemInfo.isStageEnvironment().then(isStaging => {
+    const url = isStaging ? STORAGE_SUBSCRIPTION_URL_STAGE : STORAGE_SUBSCRIPTION_URL;
+    return url.replace("CID", cid);
+  }).then(url => {
+    return util.fetchWithRetry(url, {}, MAX_RETRIES, RETRY_INTERVAL).then(resp=>resp.json());
+  });
 }
 
 function sendLicensingUpdate() {

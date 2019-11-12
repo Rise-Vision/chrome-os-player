@@ -169,5 +169,32 @@ describe('System Info', () => {
     assert.equal(systemInfo.getAppId(), 'appid');
   });
 
+  it('should return stage environment flag when configured to stage', () => {
+    chrome.storage.local.get.yields({environment: "stage"});
+    return systemInfo.isStageEnvironment().then(isStaging => {
+      assert.equal(isStaging, true);
+    });
+  });
+
+  it('should return stage environment flag when configured to stage with different case', () => {
+    chrome.storage.local.get.yields({environment: "StAge"});
+    return systemInfo.isStageEnvironment().then(isStaging => {
+      assert.equal(isStaging, true);
+    });
+  });
+
+  it('should return stage environment flag as false when environment not configured', () => {
+    chrome.storage.local.get.yields({});
+    return systemInfo.isStageEnvironment().then(isStaging => {
+      assert.equal(isStaging, false);
+    });
+  });
+
+  it('should return stage environment flag as false when environment configure to something else', () => {
+    chrome.storage.local.get.yields({environment: "testing"});
+    return systemInfo.isStageEnvironment().then(isStaging => {
+      assert.equal(isStaging, false);
+    });
+  });
 
 });
