@@ -13,7 +13,8 @@ function checkStaleFiles(timer = setTimeout) {
   return processEntry(entry)
     .then(() => checkStaleFiles(timer))
     .catch((err) => {
-      handleError(err, entry);
+      handleError(err, entry)
+      .catch(() => {});
       return intervalCheck();
     });
 
