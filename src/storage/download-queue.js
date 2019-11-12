@@ -13,8 +13,7 @@ function checkStaleFiles(timer = setTimeout) {
   return processEntry(entry)
     .then(() => checkStaleFiles(timer))
     .catch((err) => {
-      handleError(err, entry)
-      .catch(() => {});
+      handleError(err, entry);
       return intervalCheck();
     });
 
@@ -44,9 +43,7 @@ function handleError(err, entry) {
   localMessaging.sendFileError({filePath, version, msg, details: err ? err.stack : {}});
   logger.error(defaultMessage, err, {filePath});
 
-  return db.fileMetadata.put({filePath, status: "UNKNOWN", version: "0"})
-    .then(() => Promise.reject(err))
-    .catch(() => Promise.reject(err));
+  db.fileMetadata.put({filePath, status: "UNKNOWN", version: "0"});
 }
 
 module.exports = {
