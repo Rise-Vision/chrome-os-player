@@ -2,6 +2,7 @@
 const assert = require('assert');
 const sinon = require('sinon');
 const chrome = require('sinon-chrome/apps');
+const fetch = require("node-fetch");
 const windowManager = require('../../../src/window-manager');
 const networkChecks = require('../../../src/network-checks');
 
@@ -17,6 +18,10 @@ describe('Countdown Screen', () => {
     showNetworkError() {},
     showWaitingForOnLineStatus() {}
   }
+
+  before(() => {
+    global.fetch = fetch;
+  });
 
   after(() => chrome.flush());
 
