@@ -8,6 +8,7 @@ const networkChecks = require('../../../src/network-checks');
 const screen = require('../../../src/display-registration/countdown');
 
 const sandbox = sinon.createSandbox();
+const fetch = sandbox.stub();
 
 describe('Countdown Screen', () => {
 
@@ -18,7 +19,14 @@ describe('Countdown Screen', () => {
     showWaitingForOnLineStatus() {}
   }
 
-  after(() => chrome.flush());
+  before(() => {
+    global.fetch = fetch;
+  });
+
+  after(() => {
+    chrome.flush();
+    Reflect.deleteProperty(global, 'fetch');
+  });
 
   afterEach(() => sandbox.restore());
 
@@ -109,6 +117,8 @@ describe('Countdown Screen', () => {
     sandbox.spy(viewModel, 'showWaitingForOnLineStatus');
     const clock = sandbox.useFakeTimers();
 
+    // simulate waiting for response - fetch returns promise that never resolves nor rejects
+    fetch.resolves(new Promise(()=>{}));
     screen.createController(viewModel);
 
     return Promise.resolve(clock.runAll())
