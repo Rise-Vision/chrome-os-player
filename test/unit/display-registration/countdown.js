@@ -23,7 +23,10 @@ describe('Countdown Screen', () => {
     global.fetch = fetch;
   });
 
-  after(() => chrome.flush());
+  after(() => {
+    chrome.flush();
+    Reflect.deleteProperty(global, 'fetch');
+  });
 
   afterEach(() => sandbox.restore());
 
