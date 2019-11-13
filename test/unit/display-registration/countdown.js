@@ -2,13 +2,13 @@
 const assert = require('assert');
 const sinon = require('sinon');
 const chrome = require('sinon-chrome/apps');
-const fetch = require("node-fetch");
 const windowManager = require('../../../src/window-manager');
 const networkChecks = require('../../../src/network-checks');
 
 const screen = require('../../../src/display-registration/countdown');
 
 const sandbox = sinon.createSandbox();
+const fetch = sandbox.stub();
 
 describe('Countdown Screen', () => {
 
@@ -114,6 +114,8 @@ describe('Countdown Screen', () => {
     sandbox.spy(viewModel, 'showWaitingForOnLineStatus');
     const clock = sandbox.useFakeTimers();
 
+    // simulate waiting for response - fetch returns promise that never resolves nor rejects
+    fetch.resolves(new Promise(()=>{}));
     screen.createController(viewModel);
 
     return Promise.resolve(clock.runAll())
