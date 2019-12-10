@@ -61,7 +61,7 @@ function refresh(watchlist, lastChanged) {
   const filePaths = Object.keys(watchlist);
   logger.log(`storage - received WATCHLIST-RESULT`, {lastChanged, filePaths});
 
-  if (filePaths.length === 0) {
+  if (filePaths.length === 0 && lastChanged !== "0") {
     return Promise.resolve();
   }
 

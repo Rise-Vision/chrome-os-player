@@ -230,6 +230,33 @@ describe('Storage Watchlist', () => {
       });
     });
 
+    it('rewatches local files and folders missing from remote watchlist when remote returns empty watchlist and version 0', () => {
+      const folderPath = "my-bucket/my-folder";
+
+      db.fileMetadata.getAllFolders.restore();
+      sandbox.stub(db.fileMetadata, 'getAllFolders')
+      .returns([{filePath: folderPath, version: "0"}]);
+
+      const testEntries = [
+        {filePath: 'bucket/file1', status: 'CURRENT', version: '1'},
+        {filePath: 'bucket/file2', status: 'CURRENT', version: '2'},
+        {filePath: 'bucket/file3', status: 'CURRENT', version: '3'}
+      ];
+
+      sandbox.stub(db.fileMetadata, 'get').callsFake(filePath =>
+        testEntries.find(entry => entry.filePath === filePath)
+      );
+      sandbox.stub(db.watchlist, 'allEntries').returns(testEntries);
+
+      const remoteWatchlist = {};
+
+      return watchlist.refresh(remoteWatchlist, "0")
+      .then(() => {
+        sinon.assert.calledWith(watch.requestMSUpdate, {filePath: folderPath, topic: 'watch'});
+        sinon.assert.calledThrice(db.fileMetadata.put);
+      });
+    });
+
     it('does not refresh anything if there is no remote watchlist provided', () => {
       const testEntries = [
         {filePath: 'bucket/file1', status: 'CURRENT', version: '1'},
@@ -249,7 +276,5 @@ describe('Storage Watchlist', () => {
         sinon.assert.notCalled(db.watchlist.setLastChanged);
       });
     });
-
   });
-
 });
