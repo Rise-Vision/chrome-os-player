@@ -7,10 +7,12 @@ module.exports = {
   init() {
     messagingServiceClient.on('clear-local-storage-request', ()=>{
 
-      logger.log('clear-local-storage-request');
+      logger.log('storage - clear-local-storage-request');
 
       db.fileMetadata.clear();
       db.watchlist.clear();
+
+      logger.log('storage - database after clearing local storage', db.getEntireDBObject());
 
       rebootScheduler.restart();
     })
