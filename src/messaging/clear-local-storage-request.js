@@ -5,7 +5,7 @@ const rebootScheduler = require('../reboot-scheduler');
 
 module.exports = {
   init() {
-    messagingServiceClient.on('clear-local-storage-request', ()=>{
+    messagingServiceClient.on('CLEAR-LOCAL-STORAGE-REQUEST', ()=>{
 
       logger.log('storage - clear-local-storage-request');
 
