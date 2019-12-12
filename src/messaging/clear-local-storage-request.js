@@ -12,7 +12,7 @@ module.exports = {
       db.fileMetadata.clear();
       db.watchlist.clear();
 
-      logger.log('storage - database after clearing local storage', db.getEntireDBObject());
+      logger.log('storage - database cleared. Restarting...', db.getEntireDBObject());
 
       rebootScheduler.restart();
     })
