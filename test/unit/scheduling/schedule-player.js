@@ -363,6 +363,35 @@ describe("Schedule Player", ()=>{
       assert.equal(played.includes("test-url-1"), true);
       assert.equal(played.includes("test-url-2"), false);
     });
+
+    it("restarts playing item if start is called and item is still valid", ()=>{
+      setTimeout.reset();
+      setTimeout.returns();
+
+      const testData = {content: {
+        schedule: {
+          name: "test schedule",
+          timeDefined: false,
+          items: [
+            {
+              name: "test item 1",
+              timeDefined: false,
+              objectReference: "test-url-1",
+              duration: 10
+            }
+          ]
+        }
+      }};
+      scheduleParser.setContent(testData);
+      schedulePlayer.start();
+      played.lenght = 0;
+      scheduleParser.setContent(testData);
+      schedulePlayer.start();
+
+      assert.equal(played.includes("test-url-1"), true);
+    });
+
+
   });
 
   describe("Scenarios", ()=>{
