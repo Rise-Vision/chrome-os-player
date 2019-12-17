@@ -6,6 +6,7 @@ const messaging = require('./messaging/messaging-service-client');
 const storage = require('./storage/storage');
 const licensing = require('./licensing');
 const debugDataRequest = require('./messaging/debug-data-request');
+const clearLocalStorageRequest = require('./messaging/clear-local-storage-request');
 const rebootScheduler = require('./reboot-scheduler');
 const orientation = require('./orientation');
 const fileServer = require('./storage/file-server');
@@ -181,6 +182,7 @@ function init() {
       .then(fetchContent)
       .then(licensing.init)
       .then(debugDataRequest.init)
+      .then(clearLocalStorageRequest.init)
       .catch(error => logger.error('player - error when initilizing modules', error));
     fileServer.init();
     uptime.init();
