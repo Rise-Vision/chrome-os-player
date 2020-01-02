@@ -280,4 +280,31 @@ describe("Schedule Parser", () => {
     urlItem.objectReference = "https://widgets.risevision.com/staging/pages/2018.12.28.14.00/src/rise-data-image.html";
     assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), false);
   });
+
+  it("should return false when multiple items supports no viewer mode", () => {
+    const urlItem = {
+      type: "url",
+      objectReference: "http://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html"
+    };
+
+    const templateItem = {
+      name: "Copy of Single Agriculture",
+      type: "presentation",
+      presentationType: "HTML Template",
+      objectReference: "8c5059bc-f6f1-4c2b-b886-eccc1d37ed74",
+      duration: 30,
+      timeDefined: false
+    };
+
+    const data = {
+      content: {
+        schedule: {
+          items: [urlItem, templateItem]
+        }
+      }
+    };
+
+    assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), false);
+
+  });
 });

@@ -111,11 +111,6 @@ describe('Content Loader', () => {
               "type": "presentation",
               "presentationType": "HTML Template",
               "objectReference": testObjRef
-            },
-            {
-              "type": "presentation",
-              "presentationType": "HTML Template",
-              "objectReference": "other-obj-ref"
             }
           ]
         }
@@ -127,7 +122,6 @@ describe('Content Loader', () => {
       const items = data.content.schedule.items;
       assert.equal(items[0].type, "url");
       assert.equal(items[0].objectReference, computedTemplateURL);
-      assert.equal(items[1].type, "url");
     });
   });
 
@@ -187,10 +181,6 @@ describe('Content Loader', () => {
           {
             "id": testObjRef,
             "productCode": testPCode
-          },
-          {
-            "id": "other-obj-ref",
-            "productCode": "other-p-code"
           }
         ],
         schedule: {
@@ -199,11 +189,6 @@ describe('Content Loader', () => {
               "type": "presentation",
               "presentationType": "HTML Template",
               "objectReference": testObjRef
-            },
-            {
-              "type": "presentation",
-              "presentationType": "HTML Template",
-              "objectReference": "other-obj-ref"
             }
           ]
         }
