@@ -19,7 +19,7 @@ const noViewerSchedulePlayer = require('./scheduling/schedule-player');
 const contentWatchdog = require('./content-watchdog');
 const whiteScreenAnalyser = require('./white-screen-analyser');
 
-const VIEWER_URL = "http://viewer.risevision.com/Viewer.html";
+const VIEWER_URL = "https://viewer-test.risevision.com/Viewer.html";
 
 function setUpMessaging() {
   const webview = document.querySelector('webview');
@@ -152,10 +152,10 @@ function isViewerLoaded() {
 }
 
 function loadContent(contentData) {
-  if (scheduleParser.hasOnlyNoViewerURLItems()) {
-    setUpClientInfoLogNoViewer();
-    return Promise.resolve(noViewerSchedulePlayer.start());
-  }
+  // if (scheduleParser.hasOnlyNoViewerURLItems()) {
+  //   setUpClientInfoLogNoViewer();
+  //   return Promise.resolve(noViewerSchedulePlayer.start());
+  // }
 
   if (!isViewerLoaded()) {
     setUpClientInfoLog();
