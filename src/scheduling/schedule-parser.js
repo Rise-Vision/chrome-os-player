@@ -46,6 +46,14 @@ module.exports = {
       return true;
     });
   },
+  hasOnlyHtmlTemplates(data = scheduleContent) {
+
+    if (!module.exports.validateContent(data)) {return false;}
+
+    return data.content.schedule.items.every(item=>{
+      return item.presentationType === "HTML Template"
+    });
+  },
   millisUntilNextScheduledTime(now, sched = scheduleContent.content.schedule) {
     return sched.items.concat(sched).reduce((nextMillis, item)=>{
       if (is24x7(item)) {return nextMillis;}
