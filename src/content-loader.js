@@ -31,7 +31,7 @@ function loadData() {
   })
   .then(savedContent => savedContent || fetchContent())
   .then(data => {
-    chrome.storage.local.remove('content');
+    // chrome.storage.local.remove('content');
     return data;
   });
 }

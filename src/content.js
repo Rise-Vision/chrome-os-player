@@ -36,7 +36,7 @@ function setUpMessaging() {
 
   setUpWebviewEvents(webview);
 
-  messaging.on('content-update', fetchContent);
+  messaging.on('content-update', updateContent);
   messaging.on('reboot-request', () => rebootScheduler.rebootNow());
   messaging.on('restart-request', () => rebootScheduler.restart());
   messaging.on('screenshot-request', (request) => screenshot.handleRequest(webview, request));
@@ -110,6 +110,14 @@ function setUpClientInfoLogNoViewer() {
   licensing.onAuthorizationStatus(isAuthorized => {
     logger.log('authorization status received', isAuthorized);
     logger.logClientInfo({width: window.innerWidth, height: window.innerHeight}, isAuthorized);
+  });
+}
+
+function updateContent() {
+  return contentLoader.fetchContent()
+  .then(fetchContent)
+  .catch((error) => {
+    logger.error('player - error when updating content', error);
   });
 }
 
