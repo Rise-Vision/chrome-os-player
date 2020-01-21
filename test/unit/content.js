@@ -18,14 +18,14 @@ describe('Content', () => {
     content = require('../../src/content'); // eslint-disable-line global-require
   });
 
-  it('should load Viewer over HTTPS when schedule has tempalte only', () => {
+  it('should load Viewer over HTTPS when schedule has template items only', () => {
     sandbox.stub(scheduleParser, 'hasOnlyHtmlTemplates').returns(true);
 
     const viewerUrl = content._getViewerUrlForSchedule();
     assert.equal(viewerUrl, "https://viewer.risevision.com/Viewer.html");
   });
 
-  it('should load Viewer over HTTP when includes non temaplte items', () => {
+  it('should load Viewer over HTTP when includes non template items', () => {
     sandbox.stub(scheduleParser, 'hasOnlyHtmlTemplates').returns(false);
 
     const viewerUrl = content._getViewerUrlForSchedule();

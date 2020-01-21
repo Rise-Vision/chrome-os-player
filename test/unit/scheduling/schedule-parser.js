@@ -308,7 +308,7 @@ describe("Schedule Parser", () => {
 
   });
 
-  it("should return true when shedule has temapltes only", () => {
+  it("should return true when shedule has template items only", () => {
     const urlItem = {
       type: "url",
       objectReference: "http://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html"
@@ -344,7 +344,7 @@ describe("Schedule Parser", () => {
 
   });
 
-  it("should return false when shedule includes non temaplte items", () => {
+  it("should return false when shedule includes non template items", () => {
     const urlItem = {
       type: "url",
       objectReference: "http://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html"
