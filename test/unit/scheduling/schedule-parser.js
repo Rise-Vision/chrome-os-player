@@ -307,4 +307,67 @@ describe("Schedule Parser", () => {
     assert.equal(scheduleParser.hasOnlyNoViewerURLItems(data), false);
 
   });
+
+  it("should return true when shedule has temapltes only", () => {
+    const urlItem = {
+      type: "url",
+      objectReference: "http://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html"
+    };
+
+    const templateItem1 = {
+      name: "Copy of Single Agriculture 1",
+      type: "presentation",
+      presentationType: "HTML Template",
+      objectReference: "8c5059bc-f6f1-4c2b-b886-eccc1d37ed75",
+      duration: 30,
+      timeDefined: false
+    };
+
+    const templateItem2 = {
+      name: "Copy of Single Agriculture 2",
+      type: "presentation",
+      presentationType: "HTML Template",
+      objectReference: "9c5059bc-f6f1-4c2b-b886-eccc1d37ed74",
+      duration: 30,
+      timeDefined: false
+    };
+
+    const data = {
+      content: {
+        schedule: {
+          items: [templateItem1, templateItem2]
+        }
+      }
+    };
+
+    assert.equal(scheduleParser.hasOnlyHtmlTemplates(data), true);
+
+  });
+
+  it("should return false when shedule includes non temaplte items", () => {
+    const urlItem = {
+      type: "url",
+      objectReference: "http://storage.googleapis.com/risemedialibrary-7d948ac7-decc-4ed3-aa9c-9ba43bda91dc/pwa-examples/js13kpwa/index4.html"
+    };
+
+    const templateItem = {
+      name: "Copy of Single Agriculture",
+      type: "presentation",
+      presentationType: "HTML Template",
+      objectReference: "8c5059bc-f6f1-4c2b-b886-eccc1d37ed74",
+      duration: 30,
+      timeDefined: false
+    };
+
+    const data = {
+      content: {
+        schedule: {
+          items: [urlItem, templateItem]
+        }
+      }
+    };
+
+    assert.equal(scheduleParser.hasOnlyHtmlTemplates(data), false);
+
+  });
 });

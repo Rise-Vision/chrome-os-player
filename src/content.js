@@ -225,4 +225,9 @@ function init() {
   contentWatchdog.init(webview);
 }
 
+module.exports = {
+  _getViewerUrlForSchedule: getViewerUrlForSchedule,
+  _viewerHttpProtocolMatches: viewerHttpProtocolMatches
+}
+
 document.addEventListener('DOMContentLoaded', init);
