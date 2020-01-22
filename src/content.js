@@ -20,7 +20,7 @@ const noViewerSchedulePlayer = require('./scheduling/schedule-player');
 const contentWatchdog = require('./content-watchdog');
 const whiteScreenAnalyser = require('./white-screen-analyser');
 
-const VIEWER_URL = "http://viewer.risevision.com/Viewer.html";
+const VIEWER_URL = "viewer.risevision.com/Viewer.html";
 
 function setUpMessaging() {
   const webview = document.querySelector('webview');
@@ -36,7 +36,7 @@ function setUpMessaging() {
 
   setUpWebviewEvents(webview);
 
-  messaging.on('content-update', fetchContent);
+  messaging.on('content-update', updateContent);
   messaging.on('reboot-request', () => rebootScheduler.rebootNow());
   messaging.on('restart-request', () => rebootScheduler.restart());
   messaging.on('screenshot-request', (request) => screenshot.handleRequest(webview, request));
@@ -113,6 +113,14 @@ function setUpClientInfoLogNoViewer() {
   });
 }
 
+function updateContent() {
+  return contentLoader.fetchContent()
+  .then(fetchContent)
+  .catch((error) => {
+    logger.error('player - error when updating content', error);
+  });
+}
+
 function fetchContent() {
   return contentLoader.loadContent()
   .then(contentData => {
@@ -130,12 +138,22 @@ function fetchContent() {
   });
 }
 
+function getLoadedViewerUrl() {
+  const webview = document.querySelector('webview');
+  return webview.src;
+}
+
+function getViewerUrlForSchedule() {
+  const protocol = scheduleParser.hasOnlyHtmlTemplates() ? "https" : "http";
+  return `${protocol}://${VIEWER_URL}`;
+}
+
 function loadViewerUrl() {
   viewerMessaging.reset();
   noViewerSchedulePlayer.stop();
 
   chrome.storage.local.get('displayId', ({displayId}) => {
-    const url = `${VIEWER_URL}?player=true&type=display&id=${displayId}`;
+    const url = `${getViewerUrlForSchedule()}?player=true&type=display&id=${displayId}`;
     loadUrl(url);
   });
 }
@@ -147,9 +165,20 @@ function loadUrl(url) {
 }
 
 function isViewerLoaded() {
-  const webview = document.querySelector('webview');
-  const loadedUrl = webview.src;
+  const loadedUrl = getLoadedViewerUrl();
   return loadedUrl && loadedUrl.indexOf(VIEWER_URL) >= 0;
+}
+
+function viewerHttpProtocolMatches() {
+  const loadedViewerUrl = getLoadedViewerUrl();
+  const viewerUrlForSchedule = getViewerUrlForSchedule();
+
+  if (!loadedViewerUrl) {return true}
+
+  const currentProtocol = loadedViewerUrl.toUpperCase().startsWith("HTTPS") ? "https" : "http";
+  const newProtocol = viewerUrlForSchedule.toUpperCase().startsWith("HTTPS") ? "https" : "http";
+
+  return currentProtocol === newProtocol;
 }
 
 function loadContent(contentData) {
@@ -160,6 +189,9 @@ function loadContent(contentData) {
 
   if (!isViewerLoaded()) {
     setUpClientInfoLog();
+  }
+
+  if (!isViewerLoaded() || !viewerHttpProtocolMatches()) {
     loadViewerUrl();
   }
 
@@ -191,6 +223,11 @@ function init() {
 
   const webview = document.querySelector('webview');
   contentWatchdog.init(webview);
+}
+
+module.exports = {
+  _getViewerUrlForSchedule: getViewerUrlForSchedule,
+  _viewerHttpProtocolMatches: viewerHttpProtocolMatches
 }
 
 document.addEventListener('DOMContentLoaded', init);

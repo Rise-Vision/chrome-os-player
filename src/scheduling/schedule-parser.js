@@ -19,10 +19,14 @@ const DAY_OF_WEEK = {
 };
 
 const DAY_IN_MILLIS = 1000 * 60 * 60 * 24;
+const VIEWER_ONLY_MODE = true;
 
 module.exports = {
   scheduledToPlay,
   hasOnlyNoViewerURLItems(data = scheduleContent) {
+
+    if (VIEWER_ONLY_MODE) {return false;}
+
     if (!module.exports.validateContent(data)) {return false;}
 
     if (data.content.schedule.items.length > 1) {
@@ -40,6 +44,14 @@ module.exports = {
       if (!noViewerURLs.test(item.objectReference)) {return false;}
 
       return true;
+    });
+  },
+  hasOnlyHtmlTemplates(data = scheduleContent) {
+
+    if (!module.exports.validateContent(data)) {return false;}
+
+    return data.content.schedule.items.every(item=>{
+      return item.presentationType === "HTML Template"
     });
   },
   millisUntilNextScheduledTime(now, sched = scheduleContent.content.schedule) {

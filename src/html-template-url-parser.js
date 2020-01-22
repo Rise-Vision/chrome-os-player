@@ -7,7 +7,8 @@ module.exports = {
 
     const restructuredData = JSON.parse(JSON.stringify(contentData));
 
-    const protocol = scheduleParser.hasOnlyNoViewerURLItems(contentData) ? "https" : "http";
+    const protocol = scheduleParser.hasOnlyNoViewerURLItems(contentData) ||
+    scheduleParser.hasOnlyHtmlTemplates(contentData) ? "https" : "http";
 
     const HTMLTemplateURL = `${protocol}://widgets.risevision.com/STAGE/templates/PCODE/src/template.html?presentationId=PID&waitForPlayer=true`;
 

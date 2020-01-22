@@ -29,11 +29,7 @@ function loadData() {
   return new Promise((resolve) => {
     chrome.storage.local.get(items => resolve(items.content));
   })
-  .then(savedContent => savedContent || fetchContent())
-  .then(data => {
-    chrome.storage.local.remove('content');
-    return data;
-  });
+  .then(savedContent => savedContent || fetchContent());
 }
 
 function loadContent() {
