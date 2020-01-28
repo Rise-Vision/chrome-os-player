@@ -93,6 +93,11 @@ workflows:
   test_and_deploy:
     jobs:
       - "test"
+      - "coveralls"
+          filters:
+            branches:
+              only:
+                - master
       - "deploy_beta":
           requires:
             - coveralls
