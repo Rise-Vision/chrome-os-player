@@ -17,6 +17,18 @@ jobs:
           command: npm run test
           no_output_timeout: 1m
 
+  "coveralls":
+    docker: *DOCKERIMAGE
+    steps:
+      - checkout
+      - attach_workspace:
+          at: .
+      - restore_cache:
+          key: node-cache-v2-{{ .Branch }}-{{ checksum "package.json" }}
+      - run:
+          command: npm run coveralls
+          no_output_timeout: 1m
+
   "deploy_beta":
     docker: *DOCKERIMAGE
     steps:
@@ -83,7 +95,7 @@ workflows:
       - "test"
       - "deploy_beta":
           requires:
-            - test
+            - coveralls
           filters:
             branches:
               only:
