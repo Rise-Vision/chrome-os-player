@@ -36,7 +36,7 @@ function loadContent() {
   return Promise.all([loadData(), systemInfo.isStageEnvironment()]).then(([contentData, isStaging]) => { // eslint-disable-line max-statements
     const supportedWidgets = ['image', 'video', 'google-calendar', 'google-spreadsheet', 'html', 'rss', 'text', 'time-date', 'web-page'];
     const regex = new RegExp(`http(?:s?)://s3.amazonaws.com/widget-(${supportedWidgets.join('|')})`, 'g');
-    const rewriteUrl = (match, widgetName) => `http://widgets.risevision.com/widget-${widgetName}`; // eslint-disable-line func-style
+    const rewriteUrl = (match, widgetName) => `https://widgets.risevision.com/widget-${widgetName}`; // eslint-disable-line func-style
     const hasPresentations = contentData && contentData.content && contentData.content.presentations;
     const hasScheduleItems = contentData && contentData.content && contentData.content.schedule && contentData.content.schedule.items;
 

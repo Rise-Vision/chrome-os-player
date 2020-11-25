@@ -20,7 +20,7 @@ const noViewerSchedulePlayer = require('./scheduling/schedule-player');
 const contentWatchdog = require('./content-watchdog');
 const whiteScreenAnalyser = require('./white-screen-analyser');
 
-const VIEWER_URL = "viewer.risevision.com/Viewer.html";
+const VIEWER_URL = "testing-dot-rvaviewer-test.appspot.com/Viewer.html";
 
 function setUpMessaging() {
   const webview = document.querySelector('webview');
@@ -144,8 +144,8 @@ function getLoadedViewerUrl() {
 }
 
 function getViewerUrlForSchedule() {
-  const protocol = scheduleParser.hasOnlyHtmlTemplates() ? "https" : "http";
-  return `${protocol}://${VIEWER_URL}`;
+  // const protocol = scheduleParser.hasOnlyHtmlTemplates() ? "https" : "http";
+  return `https://${VIEWER_URL}`;
 }
 
 function loadViewerUrl() {
