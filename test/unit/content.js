@@ -22,25 +22,25 @@ describe('Content', () => {
     sandbox.stub(scheduleParser, 'hasOnlyHtmlTemplates').returns(true);
 
     const viewerUrl = content._getViewerUrlForSchedule();
-    assert.equal(viewerUrl, "https://viewer.risevision.com/Viewer.html");
+    assert.equal(viewerUrl, "https://widgets.risevision.com/viewer/Viewer.html");
   });
 
   it('should load Viewer over HTTP when includes non template items', () => {
     sandbox.stub(scheduleParser, 'hasOnlyHtmlTemplates').returns(false);
 
     const viewerUrl = content._getViewerUrlForSchedule();
-    assert.equal(viewerUrl, "http://viewer.risevision.com/Viewer.html");
+    assert.equal(viewerUrl, "http://widgets.risevision.com/viewer/Viewer.html");
   });
 
   it('should return true if http protocol of the currently running viewer matches protocol of the new schedule', () => {
-    global.document.querySelector = () => {return {src: 'https://viewer.risevision.com/Viewer.html'}};
+    global.document.querySelector = () => {return {src: 'https://widgets.risevision.com/viewer/Viewer.html'}};
     sandbox.stub(scheduleParser, 'hasOnlyHtmlTemplates').returns(true);
 
     assert.equal(content._viewerHttpProtocolMatches(), true);
   });
 
   it('should return false if http protocol of the currently running viewer does not match protocol of the new schedule', () => {
-    global.document.querySelector = () => {return {src: 'http://viewer.risevision.com/Viewer.html'}};
+    global.document.querySelector = () => {return {src: 'http://widgets.risevision.com/viewer/Viewer.html'}};
     sandbox.stub(scheduleParser, 'hasOnlyHtmlTemplates').returns(true);
 
     assert.equal(content._viewerHttpProtocolMatches(), false);

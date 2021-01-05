@@ -5,7 +5,7 @@ const TIMEOUT_MILLIS = 60000;
 const TIMEOUT_ERROR = Error('network-check-timeout');
 const NOT_ONLINE_ERROR = Error('network-not-online');
 const siteList = [
-  "http://viewer.risevision.com",
+  "http://widgets.risevision.com/viewer/Viewer.html",
   "http://widgets.risevision.com/widget-image/0.1.1/dist/widget.html",
   "http://s3.amazonaws.com/widget-video-rv/1.1.0/dist/widget.html",
   "https://services.risevision.com/healthz",
@@ -63,7 +63,7 @@ module.exports = {
     module.exports.checkSites();
   },
   waitForViewer(attempt = 1, timeout = 1000) { // eslint-disable-line no-magic-numbers
-    return fetch("http://viewer.risevision.com")
+    return fetch("http://widgets.risevision.com/viewer/Viewer.html")
     .then(resp => resp.ok ? resp : Promise.reject(Error(`${resp.statusText}`)))
     .catch(error => {
       logger.error('waiting for viewer', error);

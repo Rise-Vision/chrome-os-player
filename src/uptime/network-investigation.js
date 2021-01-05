@@ -2,7 +2,7 @@ const logger = require('../logging/logger');
 
 const siteList = [
   "https://services.risevision.com/healthz",
-  "https://viewer.risevision.com",
+  "https://widgets.risevision.com/viewer/Viewer.html",
   "https://storage-dot-rvaserver2.appspot.com",
   "https://store.risevision.com",
   "https://s3.amazonaws.com/widget-video-rv/1.1.0/dist/widget.html",
