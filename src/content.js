@@ -20,7 +20,7 @@ const noViewerSchedulePlayer = require('./scheduling/schedule-player');
 const contentWatchdog = require('./content-watchdog');
 const whiteScreenAnalyser = require('./white-screen-analyser');
 
-const VIEWER_URL = "viewer.risevision.com/Viewer.html";
+const VIEWER_URL = "widgets.risevision.com/viewer/Viewer.html";
 
 function setUpMessaging() {
   const webview = document.querySelector('webview');
